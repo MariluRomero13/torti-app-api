@@ -9,11 +9,6 @@ const Model = use('Model')
 class User extends Model {
   static boot () {
     super.boot()
-
-    /**
-     * A hook to hash the user password before saving
-     * it to the database.
-     */
     this.addHook('beforeSave', async (userInstance) => {
       if (userInstance.dirty.password) {
         userInstance.password = await Hash.make(userInstance.password)
@@ -21,18 +16,31 @@ class User extends Model {
     })
   }
 
-  /**
-   * A relationship on tokens is required for auth to
-   * work. Since features like `refreshTokens` or
-   * `rememberToken` will be saved inside the
-   * tokens table.
-   *
-   * @method tokens
-   *
-   * @return {Object}
-   */
   tokens () {
     return this.hasMany('App/Models/Token')
+  }
+
+  role () {
+    return this.belongsTo('App/Models/Role', 'role_id')
+  }
+
+  employee () {
+    return this.hasOne('App/Models/Employee', 'user_id')
+  }
+
+  static get store() {
+    return [
+      'role_id',
+      'username',
+      'password'
+    ]
+  }
+
+  static get update() {
+    return [
+      'role_id',
+      'username'
+    ]
   }
 }
 

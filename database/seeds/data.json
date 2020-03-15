@@ -1,0 +1,115 @@
+{
+  "roles": [
+    {
+      "name": "Administrador"
+    },
+    {
+      "name": "Repartidor"
+    },
+    {
+      "name": "Cocinero"
+    }
+  ],
+  "users": [
+    {
+      "role_id": 1,
+      "username": "admin",
+      "password": "admin"
+    },
+    {
+      "role_id": 2,
+      "username": "repartidor",
+      "password": "repartidor"
+    },
+    {
+      "role_id": 2,
+      "username": "repartidor_2",
+      "password": "repartidor"
+    }
+  ],
+  "employees": [
+    {
+      "user_id": 2,
+      "name": "Enrique",
+      "paternal": "Garza",
+      "maternal": "Gurrola",
+      "phone": "8711075423",
+      "address": "Calle San Lucas #455 Col. Sol de Oriente"
+    },
+    {
+      "user_id": 3,
+      "name": "Javier",
+      "paternal": "Macías",
+      "maternal": "Vázquez",
+      "phone": "8711254785",
+      "address": "Calle San Marino #345 Col. Las Fuentes"
+    }
+  ],
+  "customers": [
+    {
+      "name": "Tiendita Cinthia",
+      "phone": "8745231014",
+      "address": "Calle Francia #785 Col. Las Etnias"
+    },
+    {
+      "name": "Tiendita Misael",
+      "phone": "8710564872",
+      "address": "Calle España #700 Col. Las Etnias"
+    }
+  ],
+  "assignment_customers": [
+    {
+      "employee_id": 1,
+      "customer_id": 1,
+      "day": 1
+    },
+    {
+      "employee_id": 2,
+      "customer_id": 2,
+      "day": 2
+    }
+  ],
+  "products": [
+    {
+      "name": "Torilla de Harina",
+      "unit_price": 17.10
+    },
+    {
+      "name": "Torilla de Trigo",
+      "unit_price": 15.0
+    }
+  ],
+  "sales": [
+    {
+      "employee_id": 1,
+      "customer_id": 1,
+      "status": 1
+    }
+  ],
+  "sales_details": [
+    {
+      "sale_id": 1,
+      "product_id": 1,
+      "quantity": 10
+    },
+    {
+      "sale_id": 1,
+      "product_id": 2,
+      "quantity": 7
+    }
+  ],
+  "pending_payments": [
+    {
+      "customer_id": 1,
+      "deposit": 0
+    }
+  ],
+  "pending_payment_details": [
+    {
+      "pending_payment_detail": 1,
+      "product_id": 2,
+      "quantity": 4
+    }
+  ]
+
+}
