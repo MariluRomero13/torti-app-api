@@ -8,8 +8,7 @@ class Login {
   get rules () {
     return {
       username: 'required',
-      password: 'required',
-      status: 'required|number'
+      password: 'required'
     }
   }
 

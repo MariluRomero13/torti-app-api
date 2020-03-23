@@ -92,13 +92,6 @@ module.exports = {
     password: 'password'
   },
 
-  mobile: {
-    serializer: 'lucid',
-    model: 'App/Models/User',
-    scheme: 'jwt',
-    uid: 'username',
-    password: 'password'
-  },
   panel: {
       serializer: 'lucid',
       model: 'App/Models/User',
