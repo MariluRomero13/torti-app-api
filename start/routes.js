@@ -16,15 +16,6 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
-Route.get('/', 'AuthController.showLoginForm').middleware(['authenticated'])
-Route.post('/login-panel', 'AuthController.loginPanel').as('login-panel').validator('Login')
-Route.resource('/products', 'ProductController').middleware(['auth:session'])
-Route.resource('/home', 'HomeController').middleware(['auth:session'])
-Route.post('/logout-panel', 'AuthController.logoutPanel').as('logout-panel')
 
-// Mobile
-Route.post('/login', 'AuthController.login').validator('Login')
-Route.post('/login/refresh-token', 'AuthController.generateTokenWithRefresh')
-  .validator('LoginRefresh')
-Route.post('/logout', 'AuthController.logout')
-  .validator('LoginRefresh')
+require('./routes/panel')
+require('./routes/api')

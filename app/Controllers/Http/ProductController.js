@@ -11,13 +11,23 @@ const Product = use('App/Models/Product')
 class ProductController {
   async index ({ view }) {
     const products = await Product.all()
-    return view.render('products.index', {products: products.toJSON()})
+    return view.render('products.index', { products: products.toJSON() })
   }
 
-  async create ({ request, response, view }) {
+  async create ({ view }) {
+    return view.render('products.create')
   }
 
   async store ({ request, response }) {
+    const product = request.only(Product.store)
+    await Product.create(product)
+    session.flash({
+      notification: {
+        type: 'success',
+        message: `Producto agregado correctamente`
+      }
+    })
+    return response.redirect('back')
   }
 
   async show ({ params, request, response, view }) {
