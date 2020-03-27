@@ -17,10 +17,25 @@ class RoleController {
 
 
   async create ({ request, response, view }) {
+    return view.render('roles.create')
   }
 
 
   async store ({ request, response }) {
+    const rol = request.only(Role.store)
+    try {
+      await Role.create(product)
+      return response.route('roles.index')
+    } catch (error) {
+      session.flashOnly(['name'])
+      session.flash({
+        notification: {
+          type: 'danger',
+          message: `Ocurrió un error, intentelo de nuevo`
+        }
+      })
+      return response.redirect('back')
+    }
   }
 
   async show ({ params, request, response, view }) {
