@@ -15,7 +15,11 @@
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
-
+Route.post('/login', 'AuthController.login').validator('Login')
+Route.post('/login/refresh-token', 'AuthController.generateTokenWithRefresh')
+  .validator('LoginRefresh')
+Route.post('/logout', 'AuthController.logout')
+  .validator('LoginRefresh')
+Route.get('/get-products', 'ProductController.getProducts')
 
 require('./routes/panel')
-require('./routes/api')

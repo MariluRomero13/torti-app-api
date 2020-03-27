@@ -1,5 +1,39 @@
 @layout('main')
 
   @section('content')
-    <h2 class="section-title">Formulario de agregar Productos</h2>
+    <div id="example">
+      <div class="row form-card">
+        <div class="col-sm-12 col-md-12 col-lg-8">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Agregar producto</h5>
+              <form action="{{ route('products.store') }}" method="POST">
+                {{ csrfField() }}
+                <div class="form-group">
+                  <label for="name">Nombre:</label>
+                  <input type="text" class="form-control" placeholder="Nombre" name="name" value="{{ old('name', '') }}">
+                  @if(hasErrorFor('name'))
+                    <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('name') }}</div>
+                  @endif
+                </div>
+                <div class="form-group">
+                  <label for="unit_price">Precio unitario:</label>
+                  <input type="text" class="form-control" placeholder="Precio unitario" name="unit_price" value="{{ old('unit_price', '') }}">
+                  @if(hasErrorFor('unit_price'))
+                    <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('unit_price') }}</div>
+                  @endif
+                </div>
+                <div class="buttons">
+                  <a class="btn cancel-button" href="{{ route('products.index') }}">Cancelar</a>
+                  <button type="submit" class="btn add-button">Agregar</button>
+                </div>
+                @if(flashMessage('notification.type') == 'danger')
+                  <div class="alert alert-danger mb-4">{{ flashMessage('notification.message') }}</div>
+                @endif
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   @endsection
