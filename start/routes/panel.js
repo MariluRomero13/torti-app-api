@@ -20,6 +20,6 @@ Route.put('products/:id', 'ProductController.update').as('products.update')
 Route.get('products/:id/edit', 'ProductController.edit').as('products.edit').middleware('auth:session')
 Route.delete('products/:id', 'ProductController.destroy').as('users.destroy').middleware('auth:session')
 
-
-
+//Roles
+Route.get('roles', 'RoleController.index').as('roles.index').middleware('auth:session')
 
