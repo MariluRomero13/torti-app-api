@@ -20,8 +20,16 @@
   color: white;
 }
 
+.open-button:hover {
+  color: white;
+}
+
 .add-button {
   background-color: #3abb67;
+  color: white;
+}
+
+.add-button:hover {
   color: white;
 }
 
@@ -37,4 +45,25 @@
 .inactive-button {
   background-color: #f03a5f;
   color: white;
+}
+
+.cancel-button {
+  background-color: #f03a5f;
+  color: white;
+}
+
+.cancel-button:hover {
+  color: white;
+}
+
+.buttons {
+  text-align: end;
+}
+
+.form-card {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }

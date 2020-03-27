@@ -1,5 +1,4 @@
 @layout('main')
-
   @section('content')
     <h2 class="section-title">Productos</h2>
     <div class="row section">
@@ -10,15 +9,7 @@
         </a>
       </div>
       <div class="col-lg-6 col-md-6 col-sm-6">
-        <div class="input-group flex-nowrap">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="addon-wrapping">
-              <i class="fas fa-search"></i>
-            </span>
-          </div>
-          <input type="text" class="form-control" placeholder="Buscar..." aria-label="buscar"
-            aria-describedby="addon-wrapping">
-        </div>
+        @!component('pagination.pagination_search_label', pagination = products, presenter = 'PaginationPresenter')
       </div>
     </div>
     <div class="row">
@@ -33,7 +24,7 @@
               </tr>
             </thead>
             <tbody>
-              @each(product in products)
+              @each(product in products.data)
                 <tr>
                   <td>
                     {{ product.name }}
@@ -56,9 +47,14 @@
                     @endif
                   </td>
                 </tr>
+              @else
+                <tr>
+                  <td colspan="3" class="text-center">¡Sin resultados!</td>
+                </tr>
               @endeach
             </tbody>
           </table>
+          @!component('pagination.pagination_buttons', pagination = products, presenter = 'PaginationPresenter')
         </div>
       </div>
     </div>
