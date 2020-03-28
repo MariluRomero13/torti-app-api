@@ -48,16 +48,28 @@ class ProductController {
     }
   }
 
-  async show ({ params, request, response, view }) {
-  }
-
   async edit ({ params, request, response, view }) {
+    const { id } = params
+    const product = await Product.find(id)
+    return view.render('products.edit', { product: product })
   }
 
-  async update ({ params, request, response }) {
-  }
-
-  async destroy ({ params, request, response }) {
+  async update ({ params, request, response, session }) {
+    try {
+      const product = await Product.findOrFail(params.id)
+      const productData = request.only(Product.update)
+      product.merge(productData)
+      await product.save()
+      return response.route('products.index')
+    } catch(error) {
+      session.flash({
+        notification: {
+          type: 'danger',
+          message: `Ocurrió un error, intentelo de nuevo`
+        }
+      })
+      return response.redirect('back')
+    }
   }
 
   async getProducts({ response }) {

@@ -20,7 +20,11 @@ class Product extends Model {
   }
 
   static get update () {
-    return this.store
+    return [
+      'name',
+      'unit_price',
+      'status'
+    ]
   }
 }
 
