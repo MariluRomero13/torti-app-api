@@ -1,5 +1,9 @@
 'use strict'
 const Encryption = use('Encryption')
+const moment = require('moment');
+const User = use('App/Models/User')
+const Employee = use('App/Models/Employee')
+const Database = use('Database')
 class AuthController {
   showLoginForm ({ view }) {
     return view.render('auth.login')
@@ -7,13 +11,14 @@ class AuthController {
 
   async login ({ auth, response, request }) {
     const { username, password } = request.only(['username', 'password'])
+    const user = await User.findBy('username', username)
     const token = await auth.query(query => {
       query.where('status', true)
     })
-      .withRefreshToken()
-      .attempt(username, password, true)
-
-    return response.ok(token)
+    .withRefreshToken()
+    .attempt(username, password, true)
+    const assignments = await this.getRoutesByEmployee(user.id)
+    return response.ok({ token: token, assignments: assignments })
   }
 
   async loginPanel ({ auth, response, request, session }) {
@@ -68,6 +73,15 @@ class AuthController {
     response.clearCookie('PGADMIN_KEY')
     response.clearCookie('XSRF-TOKEN')
     response.clearCookie('PGADMIN_LANGUAGE')
+  }
+
+  async getRoutesByEmployee(userLogged) {
+    const user = await User.find(userLogged)
+    const employee = await Employee.find(user.id)
+    const day = moment().isoWeekday()
+
+    const assignments = await Database.raw('call get_routes_employee(?, ?)',[day,employee.id])
+    return assignments[0][0]
   }
 }
 
