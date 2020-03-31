@@ -5,16 +5,17 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 /**
- * Resourceful controller for interacting with assignmentcustomers
+ * Resourceful controller for interacting with sales
  */
 const moment = require('moment');
 const User = use('App/Models/User')
 const Employee = use('App/Models/Employee')
 const Database = use('Database')
-class AssignmentCustomerController {
+
+class SaleController {
   /**
-   * Show a list of all assignmentcustomers.
-   * GET assignmentcustomers
+   * Show a list of all sales.
+   * GET sales
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -25,8 +26,8 @@ class AssignmentCustomerController {
   }
 
   /**
-   * Render a form to be used for creating a new assignmentcustomer.
-   * GET assignmentcustomers/create
+   * Render a form to be used for creating a new sale.
+   * GET sales/create
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -37,8 +38,8 @@ class AssignmentCustomerController {
   }
 
   /**
-   * Create/save a new assignmentcustomer.
-   * POST assignmentcustomers
+   * Create/save a new sale.
+   * POST sales
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -48,8 +49,8 @@ class AssignmentCustomerController {
   }
 
   /**
-   * Display a single assignmentcustomer.
-   * GET assignmentcustomers/:id
+   * Display a single sale.
+   * GET sales/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -60,8 +61,8 @@ class AssignmentCustomerController {
   }
 
   /**
-   * Render a form to update an existing assignmentcustomer.
-   * GET assignmentcustomers/:id/edit
+   * Render a form to update an existing sale.
+   * GET sales/:id/edit
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -72,8 +73,8 @@ class AssignmentCustomerController {
   }
 
   /**
-   * Update assignmentcustomer details.
-   * PUT or PATCH assignmentcustomers/:id
+   * Update sale details.
+   * PUT or PATCH sales/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -83,8 +84,8 @@ class AssignmentCustomerController {
   }
 
   /**
-   * Delete a assignmentcustomer with id.
-   * DELETE assignmentcustomers/:id
+   * Delete a sale with id.
+   * DELETE sales/:id
    *
    * @param {object} ctx
    * @param {Request} ctx.request
@@ -93,15 +94,15 @@ class AssignmentCustomerController {
   async destroy ({ params, request, response }) {
   }
 
-  async getRoutesWithoutSale({ auth }) {
+  async getSalesHistory({ auth }) {
     const userLogged = await auth.getUser()
     const user = await User.find(userLogged.id)
     const employee = await Employee.findBy('user_id', user.id)
     const day = moment().isoWeekday()
 
-    const assignments = await Database.raw('call get_routes_without_sale(?, ?)',[day,employee.id])
+    const assignments = await Database.raw('call get_sales_history(?, ?)',[day,employee.id])
     return assignments[0][0]
   }
 }
 
-module.exports = AssignmentCustomerController
+module.exports = SaleController
