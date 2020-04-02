@@ -79,8 +79,6 @@ class AuthController {
     const user = await User.find(userLogged)
     const employee = await Employee.findBy('user_id', user.id)
     const day = moment().isoWeekday()
-
-    console.log(user)
     const assignments = await Database.raw('call get_routes_employee(?, ?)',[day,employee.id])
     return assignments[0][0]
   }

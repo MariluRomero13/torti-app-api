@@ -21,7 +21,12 @@ class AssignmentCustomer extends Model {
   }
 
   static get update() {
-    return this.store
+    return [
+      'employee_id',
+      'customer_id',
+      'day',
+      'status'
+    ]
   }
 }
 

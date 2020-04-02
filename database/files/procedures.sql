@@ -10,7 +10,7 @@ begin
     inner join employees as e on e.id = ac.employee_id
 	inner join customers as c on c.id = ac.customer_id left join (select c.id as customer_id, count(pp.id) as pendiente
 	from customers as c inner join pending_payments as pp on pp.customer_id = c.id where pp.status = 1) as t1 on t1.customer_id = c.id
-	where e.id = employee and ac.day = current_day;
+	where e.id = employee and ac.day = current_day and ac.status = 1;
 end $$
 DELIMITER $$
 
@@ -30,7 +30,7 @@ begin
 	inner join sales as s on s.customer_id = c.id
 	inner join sale_details as sl on sl.sale_id = s.id
 	inner join products as p on p.id = sl.product_id
-	where e.id = employee and ac.day = current_day and date(s.created_at) = current_date()
+	where e.id = employee and ac.day = current_day and date(s.created_at) = current_date() and s.status = 1
 	group by c.id;
 end $$
 DELIMITER $$
@@ -49,10 +49,10 @@ begin
 	inner join employees as e on e.id = ac.employee_id
 	inner join customers as c on c.id = ac.customer_id left join (select c.id as customer_id, count(pp.id) as pendiente
 	from customers as c inner join pending_payments as pp on pp.customer_id = c.id where pp.status = 1) as t1 on t1.customer_id = c.id
-	where c.id not in (select c.id as customer_id  from customers as c
+	where  ac.employee_id = employee and ac.day = current_day and c.id not in (select c.id as customer_id  from customers as c
 	inner join assignment_customers as ac on ac.customer_id = c.id
 	inner join sales as s on s.customer_id = c.id
-	where ac.employee_id = employee and ac.day = current_day and date(s.created_at) = current_date());
+	where ac.employee_id = employee and ac.day = current_day and date(s.created_at) = current_date() and ac.status = 1);
 end $$
 DELIMITER $$
 
