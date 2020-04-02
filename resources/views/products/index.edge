@@ -21,6 +21,7 @@
                 <th scope="col">Nombre</th>
                 <th scope="col">Precio Unitario</th>
                 <th scope="col">Opciones</th>
+                <th scope="col">Habilitado</th>
               </tr>
             </thead>
             <tbody>
@@ -33,9 +34,11 @@
                     {{ product.unit_price }}
                   </td>
                   <td>
-                    <button type="button" class="btn edit-button">
+                    <a type="button" class="btn edit-button" href="/products/{{ product.id }}/edit">
                       <i class="fas fa-edit"></i>
-                    </button>
+                    </a>
+                  </td>
+                  <td>
                     @if(product.status)
                       <button type="button" class="btn active-button">
                         <i class="fas fa-check"></i>
