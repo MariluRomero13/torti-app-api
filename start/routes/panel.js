@@ -24,7 +24,13 @@ Route.delete('products/:id', 'ProductController.destroy').as('users.destroy').mi
 Route.get('roles', 'RoleController.index').as('roles.index').middleware('auth:session')
 Route.get('/:page?', 'ProductController.index').as('products.pagination')
 Route.get('roles/create','RoleController.create').as('roles.create').middleware('auth:session')
-Route.post('roles', 'RolesController.store').as('roles.store')
+Route.post('roles', 'RoleController.store').as('roles.store')
 .validator('Role/StoreUpdateRole').middleware('auth:session')
 
+Route.get('/roles/edit/:id','RolesController.edit').as('roles.edit')
+Route.put('roles/update/:id','RolesController.update').as('roles.update')
+
+
+Route.post('/roles/delete/:rol_id?','RolesController.delete').as('roles.delete')
+Route.post('/roles/update/:rol_id?','RolesController.update').as('roles.update')
 

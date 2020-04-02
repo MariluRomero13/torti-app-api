@@ -24,7 +24,7 @@ class RoleController {
   async store ({ request, response }) {
     const rol = request.only(Role.store)
     try {
-      await Role.create(product)
+      await Role.create(rol)
       return response.route('roles.index')
     } catch (error) {
       session.flashOnly(['name'])
@@ -42,6 +42,10 @@ class RoleController {
   }
 
   async edit ({ params, request, response, view }) {
+    const rol = await Role.find(params.id)
+    return view.render(roles.edit,{
+      rol
+    })
   }
 
 

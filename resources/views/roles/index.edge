@@ -37,6 +37,10 @@
                   <td>
                     {{ rol.name }}
                   </td>
+                  <td>
+                    <a href="/roles/edit/{{rol.id}}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true"><i class="fas fa-edit"></i></a>
+                  <a href="/roles/delete/{{rol.id}}" class="btn btn-secondary btn-lg btn-danger" role="button" aria-pressed="true">Delete</a>
+                  </td>
                 </tr>
               @endeach
             </tbody>
