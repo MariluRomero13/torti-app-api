@@ -4,89 +4,50 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
-/**
- * Resourceful controller for interacting with employees
- */
+const Employee = use('App/Models/Employee')
+const Role = use('App/Models/Role')
 class EmployeeController {
-  /**
-   * Show a list of all employees.
-   * GET employees
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async index ({ request, response, view }) {
-    return view.render('employees.index')
+
+  async index ({ view, params, request, response }) {
+    const page = params.page || 1
+    const search = request.input('search') || ''
+    const employees = await Employee.query()
+                                    .where('name', 'LIKE', '%' + search + '%')
+                                    .orWhere('paternal', 'LIKE', '%' + search + '%')
+                                    .orWhere('maternal', 'LIKE', '%' + search + '%')
+                                    .paginate(page, 5)
+    const pagination = employees.toJSON()
+    pagination.route = 'employees.pagination'
+    if(pagination.lastPage < page && page != 1) {
+      response.route(pagination.route, { page: 1 }, null, true)
+    }
+    else {
+      pagination.offset = (pagination.page - 1) * pagination.perPage
+      pagination.search = search
+      return view.render('employees.index', { employees: pagination })
+    }
   }
 
-  /**
-   * Render a form to be used for creating a new employee.
-   * GET employees/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
+  async create ({ view }) {
+    const roles = await Role.query().where('id', '!=', 1).fetch()
+    return view.render('employees.create', { roles: roles.toJSON() })
   }
 
-  /**
-   * Create/save a new employee.
-   * POST employees
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async store ({ request, response }) {
   }
 
-  /**
-   * Display a single employee.
-   * GET employees/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
   async show ({ params, request, response, view }) {
+    return view.render('employees.detail')
   }
 
-  /**
-   * Render a form to update an existing employee.
-   * GET employees/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
   async edit ({ params, request, response, view }) {
+    const roles = await Role.query().where('id', '!=', 1).fetch()
+    return view.render('employees.edit', { roles: roles.toJSON() })
   }
 
-  /**
-   * Update employee details.
-   * PUT or PATCH employees/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async update ({ params, request, response }) {
   }
 
-  /**
-   * Delete a employee with id.
-   * DELETE employees/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async destroy ({ params, request, response }) {
   }
 }

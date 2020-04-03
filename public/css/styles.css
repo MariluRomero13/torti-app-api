@@ -56,6 +56,15 @@
   color: white;
 }
 
+.show-button {
+  background-color: #3298dc;
+  color: white;
+}
+
+.show-button:hover {
+  color: white;
+}
+
 .buttons {
   text-align: end;
 }
