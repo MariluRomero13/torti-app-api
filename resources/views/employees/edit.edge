@@ -1,0 +1,102 @@
+@layout('main')
+  @section('content')
+    <div id="example">
+      <div class="row form-card">
+        <div class="col-sm-12 col-md-12 col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Editar Empleado</h5>
+              <form action="{{ route('employees.store') }}" method="POST">
+                {{ csrfField() }}
+                <div class="row">
+                  <div class="col-sm-12 col-md-12 col-lg-4">
+                    <div class="form-group">
+                      <label for="username">Nombre de usuario:</label>
+                      <input type="text" class="form-control" placeholder="Nombre de usuario" name="username" value="{{ old('username', '') }}">
+                      @if(hasErrorFor('username'))
+                        <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('username') }}</div>
+                      @endif
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-12 col-lg-4">
+                    <div class="form-group">
+                      <label for="username">Rol:</label>
+                      <select class="custom-select" name="role_id">
+                        @each(role in roles)
+                          <option value="{{ role.id }}">{{ role.name }}</option>
+                        @endeach
+                      </select>
+                      @if(hasErrorFor('username'))
+                        <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('username') }}</div>
+                      @endif
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-12 col-lg-4">
+                    <div class="form-group">
+                      <label for="password">Contraseña:</label>
+                      <input type="password" class="form-control" placeholder="Contraseña" name="password" value="{{ old('password', '') }}">
+                      @if(hasErrorFor('password'))
+                        <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('password') }}</div>
+                      @endif
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12 col-md-12 col-lg-4">
+                    <div class="form-group">
+                      <label for="name">Nombre:</label>
+                      <input type="text" class="form-control" placeholder="Nombre" name="name" value="{{ old('name', '') }}">
+                      @if(hasErrorFor('name'))
+                        <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('name') }}</div>
+                      @endif
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-12 col-lg-4">
+                    <div class="form-group">
+                      <label for="paternal">Apellido paterno:</label>
+                      <input type="text" class="form-control" placeholder="Apellido paterno" name="paternal" value="{{ old('paternal', '') }}">
+                      @if(hasErrorFor('paternal'))
+                        <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('paternal') }}</div>
+                      @endif
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-12 col-lg-4">
+                    <div class="form-group">
+                      <label for="maternal">Apellido materno:</label>
+                      <input type="text" class="form-control" placeholder="Apellido materno" name="maternal" value="{{ old('maternal', '') }}">
+                      @if(hasErrorFor('maternal'))
+                        <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('maternal') }}</div>
+                      @endif
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="phone">Teléfono:</label>
+                  <input type="text" class="form-control" placeholder="Teléfono" name="phone" value="{{ old('phone', '') }}">
+                  @if(hasErrorFor('phone'))
+                    <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('phone') }}</div>
+                  @endif
+                </div>
+                <div class="form-group">
+                  <label for="address">Dirección:</label>
+                  <textarea name="address" cols="30" rows="5" class="form-control" placeholder="Dirección">
+                    {{ old('address', '') }}
+                  </textarea>
+                  @if(hasErrorFor('address'))
+                    <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('address') }}</div>
+                  @endif
+                </div>
+                <div class="buttons">
+                  <a class="btn cancel-button" href="/employees-page">Cancelar</a>
+                  <button type="submit" class="btn add-button">Agregar</button>
+                </div>
+                @if(flashMessage('notification.type') == 'danger')
+                  <div class="alert alert-danger mb-4">{{ flashMessage('notification.message') }}</div>
+                @endif
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endsection

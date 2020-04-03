@@ -1,4 +1,63 @@
 @layout('main')
   @section('content')
     <h2 class="section-title">Empleados</h2>
+    <div class="row section">
+      <div class="col-lg-6 col-md-6 col-sm-6">
+        <a type="button" class="btn open-button" href="{{ route('employees.create') }}">
+          <i class="fas fa-plus"></i>
+          Agregar
+        </a>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-6">
+        @!component('pagination.pagination_search_label', pagination = employees, presenter = 'PaginationPresenter')
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="table-responsive">
+          <table class="table table-hover table-styles">
+            <thead>
+              <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Opciones</th>
+                <th scope="col">Habilitado</th>
+              </tr>
+            </thead>
+            <tbody>
+              @each(employee in employees.data)
+                <tr>
+                  <td>
+                    {{ employee.name }} {{ employee.paternal }} {{ employee.maternal }}
+                  </td>
+                  <td>
+                    <a type="button" class="btn edit-button" href="/employees/{{ employee.id }}/edit">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    <a type="button" class="btn show-button" href="/employees/{{ employee.id }}">
+                      <i class="fas fa-sticky-note"></i>
+                    </a>
+                  </td>
+                  <td>
+                    @if(employee.status)
+                      <button type="button" class="btn active-button">
+                        <i class="fas fa-check"></i>
+                      </button>
+                    @else
+                      <button type="button" class="btn inactive-button">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    @endif
+                  </td>
+                </tr>
+              @else
+                <tr>
+                  <td colspan="3" class="text-center">¡Sin resultados!</td>
+                </tr>
+              @endeach
+            </tbody>
+          </table>
+          @!component('pagination.pagination_buttons', pagination = employees, presenter = 'PaginationPresenter')
+        </div>
+      </div>
+    </div>
   @endsection

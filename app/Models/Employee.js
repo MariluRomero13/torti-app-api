@@ -28,7 +28,14 @@ class Employee extends Model {
   }
 
   static get update() {
-    return this.store
+    return [
+      'name',
+      'paternal',
+      'maternal',
+      'phone',
+      'address',
+      'status'
+    ]
   }
 }
 

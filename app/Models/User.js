@@ -38,8 +38,8 @@ class User extends Model {
 
   static get update() {
     return [
-      'role_id',
-      'username'
+      'username',
+      'password'
     ]
   }
 }
