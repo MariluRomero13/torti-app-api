@@ -1,7 +1,7 @@
 @layout('main')
 
   @section('content')
-
+  <h2 class="section-title">Agregar rol</h2>
   <form action="{{ route('roles.store') }}" method="POST">
     {{ csrfField() }}
     <div class="form-group">

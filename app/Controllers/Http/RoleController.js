@@ -43,16 +43,26 @@ class RoleController {
 
   async edit ({ params, request, response, view }) {
     const rol = await Role.find(params.id)
-    return view.render(roles.edit,{
+    return view.render('roles.edit',{
       rol
     })
+    
   }
 
 
   async update ({ params, request, response }) {
+    const rol = await Role.find(params.id)
+    rol.name = request.input('name')
+
+    await rol.save()
+
+    return response.redirect('/roles')
   }
 
   async destroy ({ params, request, response }) {
+    const rol = await Role.find(params.id)
+    await rol.delete()
+    return response.redirect('/roles')
   }
 }
 

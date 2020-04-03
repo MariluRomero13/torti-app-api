@@ -38,8 +38,13 @@
                     {{ rol.name }}
                   </td>
                   <td>
-                    <a href="/roles/edit/{{rol.id}}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true"><i class="fas fa-edit"></i></a>
-                  <a href="/roles/delete/{{rol.id}}" class="btn btn-secondary btn-lg btn-danger" role="button" aria-pressed="true">Delete</a>
+                    <form action="{{'/roles/'+rol.id+'?_method=DELETE'}}" method="POST">
+                      {{csrfField()}}
+                      <button type="submit" class="btn btn-secondary btn-lg btn-danger float-right">DELETE</button>
+                    </form>
+                    <a href="/roles/edit/{{rol.id}}" class="btn btn-primary btn-lg active float-right" role="button" aria-pressed="true"><i class="fas fa-edit"></i></a>
+                  
+                    
                   </td>
                 </tr>
               @endeach

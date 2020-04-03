@@ -1,17 +1,17 @@
 @layout('main')
 
   @section('content')
-
-  <form action="{{ route('roles.store') }}" method="POST">
+  <h2 class="section-title">Editar rol</h2>
+  <form action="{{'/roles/'+rol.id+'?_method=PUT'}}" method="POST">
     {{ csrfField() }}
     <div class="form-group">
       <label for="rolname" style="color:white">Nombre del Rol</label>
-      <input type="text" class="form-control" id="name" name="name" placeholder="Ingresa el nombre del rol">
+      <input type="text" class="form-control" id="name" name="name" placeholder="{{rol.name}}">
       @if(hasErrorFor('name'))
                     <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('name') }}</div>
         @endif
     </div>
-    <button type="submit" class="btn btn-primary">Registrar</button>
+    <button type="submit" class="btn btn-primary">Actualizar</button>
   </form>
 
   @endsection
