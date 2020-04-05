@@ -87,3 +87,7 @@
 .text {
     margin:20px 0px;
 }
+
+.black-text {
+  color: black;
+}

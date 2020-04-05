@@ -6,6 +6,7 @@
 
 const Employee = use('App/Models/Employee')
 const Role = use('App/Models/Role')
+const User = use('App/Models/User')
 class EmployeeController {
 
   async index ({ view, params, request, response }) {
@@ -33,19 +34,65 @@ class EmployeeController {
     return view.render('employees.create', { roles: roles.toJSON() })
   }
 
-  async store ({ request, response }) {
+  async store ({ request, response, session }) {
+   try {
+    const userData = request.only(User.store)
+    const user = await User.create(userData)
+    const employee = request.only(Employee.store)
+    employee.user_id = user.id
+    await Employee.create(employee)
+    return response.route('employees.pagination')
+   } catch (error) {
+    session.flashOnly(['username', 'password', 'role_id', 'maternal',
+      'paternal', 'name', 'phone', 'address'])
+    session.flash({
+      notification: {
+        type: 'danger',
+        message: `Ocurrió un error, intentelo de nuevo`
+      }
+    })
+    return response.redirect('back')
+   }
+
   }
 
-  async show ({ params, request, response, view }) {
-    return view.render('employees.detail')
+  async show ({ params, view }) {
+    const employee = await Employee.query().where('id', params.id).with('user.role').fetch()
+    return view.render('employees.detail', { employee: employee.toJSON() })
   }
 
-  async edit ({ params, request, response, view }) {
-    const roles = await Role.query().where('id', '!=', 1).fetch()
-    return view.render('employees.edit', { roles: roles.toJSON() })
+  async edit ({ params, view }) {
+    const { id } = params
+    const employee = await Employee.query().where('id', id).with('user').fetch()
+    return view.render('employees.edit', { employee: employee.toJSON() })
   }
 
   async update ({ params, request, response }) {
+    try {
+      const employee = await Employee.findOrFail(params.id)
+      const employeeData = request.only(Employee.update)
+      const user = await User.findOrFail(employee.user_id)
+      const { username, status, password } = request.only(['username','password', 'status'])
+      employee.merge(employeeData)
+      await employee.save()
+      if (password !== null) {
+        user.password = password
+      }
+      user.username = username
+      user.status = status
+      await user.save()
+      return response.route('employees.pagination')
+    } catch (error) {
+      session.flashOnly(['username', 'password', 'maternal',
+      'paternal', 'name', 'phone', 'address', 'status'])
+      session.flash({
+        notification: {
+          type: 'danger',
+          message: `Ocurrió un error, intentelo de nuevo`
+        }
+      })
+      return response.redirect('back')
+    }
   }
 
   async destroy ({ params, request, response }) {

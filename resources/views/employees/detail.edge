@@ -6,11 +6,16 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Detalles de empleado</h5>
-              <p>Nombre: Juan García Ortíz.</p>
-              <p>Nombre de usuario: Juan García.</p>
-              <p>Rol: Repartidor.</p>
-              <p>Telefono: 8712908756.</p>
-              <p>Dirección: Calle Aztecas #456 Col. Carolinas entre Av. de la paz</p>
+              <p class="black-text">Nombre: {{ employee[0].name }} {{ employee[0].paternal }} {{ employee[0].maternal }} </p>
+              <p class="black-text">Nombre de usuario: {{ employee[0].user.username }}</p>
+              <p class="black-text">Rol: {{ employee[0].user.role.name }}</p>
+              <p class="black-text">Telefono: {{ employee[0].phone }}</p>
+              <p class="black-text">Dirección: {{ employee[0].address }}</p>
+              @if(employee[0].status)
+                <p class="black-text">Habilitado: Si<p>
+              @else
+                <p class="black-text">Habilitado: No<p>
+              @endif
               <div class="buttons">
                 <a class="btn cancel-button" href="/employees-page">Regresar</a>
               </div>

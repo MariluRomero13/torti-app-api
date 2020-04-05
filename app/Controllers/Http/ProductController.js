@@ -35,7 +35,7 @@ class ProductController {
     const product = request.only(Product.store)
     try {
       await Product.create(product)
-      return response.route('products.index')
+      return response.route('products.pagination')
     } catch (error) {
       session.flashOnly(['name', 'unit_price'])
       session.flash({
@@ -48,7 +48,7 @@ class ProductController {
     }
   }
 
-  async edit ({ params, request, response, view }) {
+  async edit ({ params, view }) {
     const { id } = params
     const product = await Product.find(id)
     return view.render('products.edit', { product: product })
@@ -60,7 +60,7 @@ class ProductController {
       const productData = request.only(Product.update)
       product.merge(productData)
       await product.save()
-      return response.route('products.index')
+      return response.route('products.pagination')
     } catch(error) {
       session.flash({
         notification: {

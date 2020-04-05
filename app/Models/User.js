@@ -36,11 +36,8 @@ class User extends Model {
     ]
   }
 
-  static get update() {
-    return [
-      'username',
-      'password'
-    ]
+  static get hidden() {
+    return ['password']
   }
 }
 

@@ -9,7 +9,7 @@ class AssignmentCustomerSchema extends Schema {
       table.increments()
       table.integer('employee_id').unsigned().references('id').inTable('employees')
       table.integer('customer_id').unsigned().references('id').inTable('customers')
-      table.json('day').notNullable()
+      table.integer('day').notNullable()
       table.boolean('status').defaultTo(true)
       table.timestamps()
     })
