@@ -9,7 +9,7 @@ class SaleDetail extends Model {
     return this.hasMany('App/Model/Product', 'product_id')
   }
 
-  sales () {
+  sale () {
     return this.hasMany('App/Model/Sale', 'sale_id')
   }
 

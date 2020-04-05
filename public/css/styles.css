@@ -91,3 +91,18 @@
 .black-text {
   color: black;
 }
+
+#sale-data {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2%;
+}
+
+.name {
+  margin-left: 2%;
+}
+
+.total {
+  font-weight: bold;
+  color: #212121;
+}

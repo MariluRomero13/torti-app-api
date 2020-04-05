@@ -20,7 +20,7 @@ class Sale extends Model {
     return [
       'customer_id',
       'employee_id',
-      'status' // vendido 1, pendiente 2
+      'status' // vendido 1, pendiente 0
     ]
   }
 }

@@ -1,0 +1,9 @@
+<form class="form-inline" action="{{ route(pagination.route, {page: 1}) }}" style="text-align:end !important; display: block;">
+  <input class="form-control mr-sm-2" name="search" type="date" placeholder="Buscar ventaaaaa" aria-label="Buscar" value="{{ pagination.search }}"/>
+  <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
+  @if(pagination.search != '')
+    <a type="button" class="btn btn-outline-danger ml-2" href="{{ route(pagination.route, {page: 1}) }}">
+      <i class="fas fa-times"></i>
+    </a>
+  @endif
+</form>

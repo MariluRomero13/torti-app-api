@@ -1,0 +1,65 @@
+@layout('main')
+  @section('content')
+    <h2 class="section-title">Ventas</h2>
+    <div class="row section">
+      <div class="col-lg-12 col-md-12 col-sm-8">
+        @!component('pagination.pagination_date_search', pagination = sales, presenter = 'PaginationPresenter')
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="table-responsive">
+          <table class="table table-hover table-styles">
+            <thead>
+              <tr>
+                <th scope="col">Vendedor</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Total</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Tipo venta</th>
+                <th scope="col">Opciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @each(sale in sales.data)
+              <tr>
+                <td>
+                  {{ sale.employee }}
+                </td>
+                <td>
+                  {{ sale.customer }}
+                </td>
+                <td>
+                  $ {{ sale.total }}
+                </td>
+                <td>
+                  {{ sale.sale_date }}
+                </td>
+                <td>
+                  @if(sale.sale_type)
+                    Vendido
+                  @else
+                    Pago Pendiente
+                  @endif
+                </td>
+                <td>
+                  <a type="button" class="btn show-button" href="/sales/{{ sale.sale_id }}">
+                    <i class="fas fa-sticky-note"></i>
+                  </a>
+                  <a type="button" class="btn edit-button" href="/employees/{{ employee.id }}/edit">
+                    <i class="fas fa-file-pdf"></i>
+                  </a>
+                </td>
+              </tr>
+              @else
+                <tr>
+                  <td colspan="3" class="text-center">¡Sin resultados!</td>
+                </tr>
+              @endeach
+            </tbody>
+          </table>
+          @!component('pagination.pagination_buttons', pagination = sales, presenter = 'PaginationPresenter')
+        </div>
+      </div>
+    </div>
+  @endsection

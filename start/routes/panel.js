@@ -39,3 +39,6 @@ Route.put('roles/update/:id','RolesController.update').as('roles.update')
 Route.post('/roles/delete/:rol_id?','RolesController.delete').as('roles.delete')
 Route.post('/roles/update/:rol_id?','RolesController.update').as('roles.update')
 
+// Sales
+Route.get('sales-page/:page?', 'SaleController.index').as('sales.pagination')
+Route.get('sales/:id', 'SaleController.show').as('sales.show').middleware('auth:session')
