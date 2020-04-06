@@ -27,6 +27,8 @@
     "@adonisjs/session": "^1.0.29",
     "@adonisjs/shield": "^1.0.8",
     "@adonisjs/validator": "^5.0.6",
+    "adonis-pdf": "0.0.22",
+    "html2pdf.js": "^0.9.2",
     "moment": "^2.24.0",
     "mongoose": "^5.9.7",
     "mysql": "^2.18.1",

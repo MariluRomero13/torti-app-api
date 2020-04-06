@@ -9,88 +9,64 @@
  */
 const moment = require('moment');
 const User = use('App/Models/User')
+const Sale = use('App/Models/Sale')
 const Employee = use('App/Models/Employee')
+const Customer = use('App/Models/Customer')
 const Database = use('Database')
 
 class SaleController {
-  /**
-   * Show a list of all sales.
-   * GET sales
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async index ({ request, response, view }) {
+  async index ({ view, params, request, response }) {
+    const page = params.page || 1
+    const search = request.input('search') || ''
+    const sales = await Database
+                            .select(['s.id as sale_id', 'c.name as customer', 's.status as sale_type',
+                              Database.raw('SUM(sd.quantity * p.unit_price) as total'),
+                              Database.raw('DATE_FORMAT(s.created_at, "%d-%m-%Y") as sale_date'),
+                              Database.raw('CONCAT(e.name," ", e.paternal," ",e.maternal) as employee')])
+                            .from('sales as s')
+                            .innerJoin('customers as c', 'c.id', 's.customer_id')
+                            .innerJoin('employees as e', 'e.id', 's.employee_id')
+                            .innerJoin('sale_details as sd', 'sd.sale_id', 's.id')
+                            .innerJoin('products as p', 'sd.product_id', 'p.id')
+                            .where('s.created_at', 'LIKE', '%' + search + '%')
+                            .groupBy('s.id')
+                            .paginate(page, 5)
+    const pagination = sales
+    pagination.route = 'sales.pagination'
+    if(pagination.lastPage < page && page != 1) {
+      response.route(pagination.route, { page: 1 }, null, true)
+    }
+    else {
+      pagination.offset = (pagination.page - 1) * pagination.perPage
+      pagination.search = search
+      return view.render('sales.index', { sales: pagination })
+    }
   }
 
-  /**
-   * Render a form to be used for creating a new sale.
-   * GET sales/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
-  }
-
-  /**
-   * Create/save a new sale.
-   * POST sales
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async store ({ request, response }) {
   }
 
-  /**
-   * Display a single sale.
-   * GET sales/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show ({ params, request, response, view }) {
+  async show ({ params, view }) {
+    const sale = await Sale.find(params.id)
+    const employee = await Employee.find(sale.employee_id)
+    const customer = await Customer.find(sale.customer_id)
+    const saleDetails = await Database
+    .select('p.name as product', 'p.unit_price as price', 'sd.quantity as quantity')
+    .from('sale_details as sd')
+    .innerJoin('products as p', 'sd.product_id', 'p.id')
+    .where('sd.sale_id', sale.id)
+    const total = await Database
+    .select([Database.raw('SUM(sd.quantity * p.unit_price) as total')])
+    .from('sale_details as sd')
+    .innerJoin('products as p', 'sd.product_id', 'p.id')
+    .where('sd.sale_id', sale.id)
+    return view.render('sales.details', { sale: sale.toJSON(), employee: employee.toJSON(), customer: customer.toJSON(),
+      sale_details: saleDetails, total: total })
   }
 
-  /**
-   * Render a form to update an existing sale.
-   * GET sales/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
-  }
-
-  /**
-   * Update sale details.
-   * PUT or PATCH sales/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async update ({ params, request, response }) {
   }
 
-  /**
-   * Delete a sale with id.
-   * DELETE sales/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async destroy ({ params, request, response }) {
   }
 
@@ -103,6 +79,7 @@ class SaleController {
     const assignments = await Database.raw('call get_sales_history(?, ?)',[day,employee.id])
     return assignments[0][0]
   }
+
 }
 
 module.exports = SaleController

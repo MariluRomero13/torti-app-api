@@ -25,8 +25,10 @@ Route.get('employees-page/:page?', 'EmployeeController.index').as('employees.pag
 Route.get('employees/create', 'EmployeeController.create').as('employees.create').middleware('auth:session')
 Route.get('employees/:id/edit', 'EmployeeController.edit').as('employees.edit').middleware('auth:session')
 Route.get('employees/:id', 'EmployeeController.show').as('employees.show').middleware('auth:session')
-
-
+Route.post('employees', 'EmployeeController.store').as('employees.store')
+.validator('Employee/StoreEmployee').middleware('auth:session')
+Route.put('employees/:id', 'EmployeeController.update').as('employees.update')
+.validator('Employee/UpdateEmployee').middleware('auth:session')
 
 // Products
 Route.post('products', 'ProductController.store').as('products.store')
@@ -39,7 +41,6 @@ Route.get('products-page/:page?', 'ProductController.index').as('products.pagina
 
 //Roles
 Route.get('roles', 'RoleController.index').as('roles.index').middleware('auth:session')
-Route.get('/:page?', 'ProductController.index').as('products.pagination')
 Route.get('roles/create','RoleController.create').as('roles.create').middleware('auth:session')
 Route.post('roles', 'RoleController.store').as('roles.store')
 .validator('Role/StoreUpdateRole').middleware('auth:session')
@@ -48,3 +49,6 @@ Route.put('roles/update/:id','RoleController.update').as('roles.update').validat
 Route.delete('/roles/delete/:id?','RoleController.destroy').as('roles.delete')
 //Route.post('/roles/update/:rol_id?','RoleController.update').as('roles.update')
 
+// Sales
+Route.get('sales-page/:page?', 'SaleController.index').as('sales.pagination')
+Route.get('sales/:id', 'SaleController.show').as('sales.show').middleware('auth:session')

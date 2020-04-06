@@ -11,7 +11,7 @@ class EmployeeSchema extends Schema {
       table.string('name', 60).notNullable()
       table.string('paternal', 60).notNullable()
       table.string('maternal', 60).notNullable()
-      table.string('phone', 15).notNullable()
+      table.string('phone', 15).notNullable().unique()
       table.text('address').notNullable()
       table.boolean('status').defaultTo(true)
       table.timestamps()

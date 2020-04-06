@@ -19,6 +19,7 @@
             <thead>
               <tr>
                 <th scope="col">Nombre</th>
+                <th scope="col">Teléfono</th>
                 <th scope="col">Opciones</th>
                 <th scope="col">Habilitado</th>
               </tr>
@@ -28,6 +29,9 @@
                 <tr>
                   <td>
                     {{ employee.name }} {{ employee.paternal }} {{ employee.maternal }}
+                  </td>
+                  <td>
+                    {{ employee.phone }}
                   </td>
                   <td>
                     <a type="button" class="btn edit-button" href="/employees/{{ employee.id }}/edit">

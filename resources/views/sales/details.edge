@@ -1,0 +1,82 @@
+@layout('main')
+  @section('content')
+    <div id="example">
+      <div class="row form-card">
+        <div class="col-sm-12 col-md-12 col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <div id="invoice">
+                <h5 class="card-title">Detalle de la venta</h5>
+                <div id="sale-data">
+                  <span><b>Vendedor: </b> {{ employee.name }} {{ employee.paternal }} {{ employee.maternal }}</span>
+                  <span class="name"><b>Cliente: </b> {{ customer.name }} </span>
+                  <span class="name"><b>Tipo: </b>
+                    @if(sale.status)
+                      Vendido
+                    @else
+                      Pago Pendiente
+                    @endif
+                  </span>
+                </div>
+                <div class="row">
+                  <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="table-responsive">
+                      <table class="table table-hover table-styles">
+                        <thead>
+                          <tr>
+                            <th scope="col">Producto</th>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">Precio</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @each(detail in sale_details)
+                            <tr>
+                              <td>
+                                {{ detail.product }}
+                              </td>
+                              <td>
+                                {{ detail.quantity }}
+                              </td>
+                              <td>
+                                $ {{ detail.price }}
+                              </td>
+                            </tr>
+                          @endeach
+                        </tbody>
+                        <caption class="total">Total de la venta: ${{ total[0].total }}</caption>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="buttons">
+                <a type="button" class="btn edit-button" onclick="generatePDF()">
+                  <i class="fas fa-file-pdf"></i>
+                </a>
+                <a class="btn cancel-button" href="/sales-page">Regresar</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endsection
+  @section('script')
+    <script>
+      function generatePDF() {
+        const element = document.getElementById("invoice");
+        const opt = {
+            margin:       1,
+            filename:     'sales_details.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+          };
+        html2pdf()
+          .set(opt)
+          .from(element)
+          .save();
+      }
+    </script>
+  @endsection
