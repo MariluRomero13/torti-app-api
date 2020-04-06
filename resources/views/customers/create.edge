@@ -1,0 +1,57 @@
+@layout('main')
+
+  @section('content')
+    <div id="example">
+      <div class="row form-card">
+        <div class="col-sm-12 col-md-12 col-lg-8">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Agregar cliente</h5>
+              <form action="{{ route('customers.store') }}" method="POST">
+                {{ csrfField() }}
+                <div class="form-group">
+                  <label for="name">Nombre:</label>
+                  <input type="text" class="form-control" placeholder="Nombre" name="name" value="{{ old('name', '') }}">
+                  @if(hasErrorFor('name'))
+                    <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('name') }}</div>
+                  @endif
+                </div>
+                <div class="form-group">
+                  <label for="unit_price">Teléfono:</label>
+                  <input type="text" class="form-control" placeholder="numero de teléfono" name="phone" value="{{ old('phone', '') }}">
+                  @if(hasErrorFor('phone'))
+                    <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('phone') }}</div>
+                  @endif
+                </div>
+                <div class="form-group">
+                    <label for="name">Dirección:</label>
+                    <input type="text" class="form-control" placeholder="Dirección" name="address" value="{{ old('address', '') }}">
+                    @if(hasErrorFor('address'))
+                      <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('address') }}</div>
+                    @endif
+                </div>
+                <div class="form-group">
+                    <label for="name">Estado</label>
+                    <select class="form-control form-control-lg" name="status">
+                        <option value="0">Inactivo</option>
+                        <option value="1">Activo</option>
+                    </select>
+                      
+                    @if(hasErrorFor('status'))
+                      <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('status') }}</div>
+                    @endif
+                </div>
+                <div class="buttons">
+                  <a class="btn cancel-button" href="/customers">Cancelar</a>
+                  <button type="submit" class="btn add-button">Agregar</button>
+                </div>
+                @if(flashMessage('notification.type') == 'danger')
+                  <div class="alert alert-danger mb-4">{{ flashMessage('notification.message') }}</div>
+                @endif
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endsection

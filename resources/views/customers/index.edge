@@ -1,10 +1,10 @@
 @layout('main')
 
   @section('content')
-    <h2 class="section-title">Roles</h2>
+    <h2 class="section-title">Clientes</h2>
     <div class="row section">
       <div class="col-lg-6 col-md-6 col-sm-6">
-        <a type="button" class="btn open-button" href="{{ route('roles.create') }}">
+        <a type="button" class="btn open-button" href="{{ route('customers.create') }}">
           <i class="fas fa-plus"></i>
           Agregar
         </a>
@@ -28,21 +28,37 @@
             <thead>
               <tr>
                 <th scope="col">Nombre</th>
+                <th scope="col">Teléfono</th>
+                <th scope="col">Dirección</th>
+                <th scope="col">Estado</th>
                 <th scope="col">Opciones</th>
               </tr>
             </thead>
             <tbody>
-              @each(rol in roles)
+              @each(cus in customers)
                 <tr>
                   <td>
-                    {{ rol.name }}
+                    {{ cus.name }}
                   </td>
                   <td>
-                    <form action="{{'/roles/delete/'+rol.id+'?_method=DELETE'}}" method="POST">
+                    {{ cus.phone }}
+                  </td>
+                  <td>
+                    {{ cus.address }}
+                  </td>
+                  <td>
+                    @if(cus.status)
+                        Activo
+                        @else
+                        Inactivo
+                        @endif
+                  </td>
+                  <td>
+                    <form action="{{'/customers/delete/'+cus.id+'?_method=DELETE'}}" method="POST">
                       {{csrfField()}}
-                      <button type="submit" class="btn btn-secondary btn-lg btn-danger float-right">DELETE</button>
+                      <button type="submit" class="btn btn-secondary btn-lg btn-danger float-right">X</button>
                     </form>
-                    <a href="/roles/edit/{{rol.id}}" class="btn btn-primary btn-lg active float-right" role="button" aria-pressed="true"><i class="fas fa-edit"></i></a>
+                    <a href="/customers/edit/{{cus.id}}" class="btn btn-primary btn-lg active float-right" role="button" aria-pressed="true"><i class="fas fa-edit"></i></a>
                   
                     
                   </td>
