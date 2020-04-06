@@ -79,6 +79,7 @@ class SaleController {
     const assignments = await Database.raw('call get_sales_history(?, ?)',[day,employee.id])
     return assignments[0][0]
   }
+
 }
 
 module.exports = SaleController
