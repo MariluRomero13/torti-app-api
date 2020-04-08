@@ -52,3 +52,6 @@ Route.delete('/roles/delete/:id?','RoleController.destroy').as('roles.delete')
 // Sales
 Route.get('sales-page/:page?', 'SaleController.index').as('sales.pagination')
 Route.get('sales/:id', 'SaleController.show').as('sales.show').middleware('auth:session')
+
+// Locations
+Route.get('locations/edit/:id','CustomerController.editLocation').as('Customers.editLocation').middleware('auth:session')

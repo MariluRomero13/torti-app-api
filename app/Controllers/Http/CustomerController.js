@@ -7,6 +7,11 @@
 /**
  * Resourceful controller for interacting with customers
  */
+const LocationModel = use('App/Models/Mongo/Location')
+const LocationFields = LocationModel.fields
+const LocationUpdateFields = LocationModel.updateFields
+const Location = LocationModel.Location
+
 
 const Customer = use('App/Models/Customer')
 class CustomerController {
@@ -129,6 +134,17 @@ class CustomerController {
     await cus.delete()
     return response.redirect('/customers')
   }
+
+  async editLocation({params,request,response,view}){
+    const customerLocation = await Location.find({ customer_id: { $eq: params.id } },
+      { _id: 0, createdAt: 0, updatedAt: 0, __v: 0 })
+    
+      return view.render('locations.edit',{
+        customerLocation
+      })
+  }
+
+  
 }
 
 module.exports = CustomerController

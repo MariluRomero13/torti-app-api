@@ -1,0 +1,43 @@
+@layout('main')
+
+  @section('content')
+
+  
+    <div id="example">
+      <div class="row form-card">
+        <div class="col-sm-12 col-md-12 col-lg-8">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Editar ubicación</h5>
+              <form action="{{'/customers/'+cus.id+'?_method=PUT'}}" method="POST">
+                {{ csrfField() }}
+                <div class="form-group">
+                <label for="name">Latitud:</label>
+                <input type="text" class="form-control"  placeholder="{{cus.name}}" name="name" value="{{ cus.name }}">
+                  @if(hasErrorFor('name'))
+                    <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('name') }}</div>
+                  @endif
+                </div>
+                <div class="form-group">
+                    <label for="name">Longitud:</label>
+                    <input type="text" class="form-control" placeholder="{{cus.name}}" name="name" value="{{ cus.name }}">
+                      @if(hasErrorFor('name'))
+                        <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('name') }}</div>
+                      @endif
+                    </div>
+                <div class="buttons">
+                  <a class="btn cancel-button" href="/customers">Cancelar</a>
+                  <button type="submit" class="btn add-button">Agregar</button>
+                </div>
+                @if(flashMessage('notification.type') == 'danger')
+                  <div class="alert alert-danger mb-4">{{ flashMessage('notification.message') }}</div>
+                @endif
+              </form>
+              <div id="map" style="height: 180px">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endsection
