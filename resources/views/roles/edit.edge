@@ -1,17 +1,31 @@
 @layout('main')
-
   @section('content')
-  <h2 class="section-title">Editar rol</h2>
-  <form action="{{'/roles/'+rol.id+'?_method=PUT'}}" method="POST">
-    {{ csrfField() }}
-    <div class="form-group">
-      <label for="rolname" style="color:white">Nombre del Rol</label>
-      <input type="text" class="form-control" id="name" name="name" placeholder="{{rol.name}}">
-      @if(hasErrorFor('name'))
+    <div id="example">
+      <div class="row form-card">
+        <div class="col-sm-12 col-md-12 col-lg-8">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Editar Rol</h5>
+              <form action="/roles/{{ role.id }}?_method=PUT" method="POST">
+                {{ csrfField() }}
+                <div class="form-group">
+                  <label for="name">Nombre:</label>
+                  <input type="text" class="form-control" placeholder="Nombre" name="name" value="{{ role.name }}">
+                  @if(hasErrorFor('name'))
                     <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('name') }}</div>
-        @endif
+                  @endif
+                </div>
+                <div class="buttons">
+                  <a class="btn cancel-button" href="/roles-page">Cancelar</a>
+                  <button type="submit" class="btn add-button">Actualizar</button>
+                </div>
+                @if(flashMessage('notification.type') == 'danger')
+                  <div class="alert alert-danger mb-4">{{ flashMessage('notification.message') }}</div>
+                @endif
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <button type="submit" class="btn btn-primary">Actualizar</button>
-  </form>
-
   @endsection

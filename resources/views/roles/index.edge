@@ -1,5 +1,4 @@
 @layout('main')
-
   @section('content')
     <h2 class="section-title">Roles</h2>
     <div class="row section">
@@ -10,15 +9,7 @@
         </a>
       </div>
       <div class="col-lg-6 col-md-6 col-sm-6">
-        <div class="input-group flex-nowrap">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="addon-wrapping">
-              <i class="fas fa-search"></i>
-            </span>
-          </div>
-          <input type="text" class="form-control" placeholder="Buscar..." aria-label="buscar"
-            aria-describedby="addon-wrapping">
-        </div>
+        @!component('pagination.pagination_search_label', pagination = roles, presenter = 'PaginationPresenter')
       </div>
     </div>
     <div class="row">
@@ -32,24 +23,25 @@
               </tr>
             </thead>
             <tbody>
-              @each(rol in roles)
+              @each(role in roles.data)
                 <tr>
                   <td>
-                    {{ rol.name }}
+                    {{ role.name }}
                   </td>
                   <td>
-                    <form action="{{'/roles/delete/'+rol.id+'?_method=DELETE'}}" method="POST">
-                      {{csrfField()}}
-                      <button type="submit" class="btn btn-secondary btn-lg btn-danger float-right"><i class="fas fa-times-circle"></i></button>
-                    </form>
-                    <a href="/roles/edit/{{rol.id}}" class="btn btn-primary btn-lg active float-right" role="button" aria-pressed="true"><i class="fas fa-edit"></i></a>
-                  
-                    
+                    <a type="button" class="btn edit-button" href="/roles/{{ role.id }}/edit">
+                      <i class="fas fa-edit"></i>
+                    </a>
                   </td>
+                </tr>
+              @else
+                <tr>
+                  <td colspan="3" class="text-center">¡Sin resultados!</td>
                 </tr>
               @endeach
             </tbody>
           </table>
+          @!component('pagination.pagination_buttons', pagination = roles, presenter = 'PaginationPresenter')
         </div>
       </div>
     </div>
