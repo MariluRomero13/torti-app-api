@@ -136,11 +136,13 @@ class CustomerController {
   }
 
   async editLocation({params,request,response,view}){
+    const cus = await Customer.find(params.id)
     const customerLocation = await Location.find({ customer_id: { $eq: params.id } },
       { _id: 0, createdAt: 0, updatedAt: 0, __v: 0 })
     
       return view.render('locations.edit',{
-        customerLocation
+        customerLocation,
+        cus
       })
   }
 

@@ -9,22 +9,42 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Editar ubicación</h5>
-              <form action="{{'/customers/'+cus.id+'?_method=PUT'}}" method="POST">
+              <form action="{{'/customers/location/'+cus.id+'?_method=PUT'}}" method="POST">
                 {{ csrfField() }}
                 <div class="form-group">
+                  <label for="name">Id:</label>
+                  <input type="text" class="form-control" value="{{cus.id}}" name="customer_id" id="customer_id">
+                </div>
+                <div class="form-group">
                 <label for="name">Latitud:</label>
-                <input type="text" class="form-control"  placeholder="{{cus.name}}" name="name" value="{{ cus.name }}">
-                  @if(hasErrorFor('name'))
-                    <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('name') }}</div>
+                <input type="text" class="form-control"  placeholder="Latitud" name="latitude" id="lat">
+                  @if(hasErrorFor('latitude'))
+                    <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('latitude') }}</div>
                   @endif
                 </div>
                 <div class="form-group">
                     <label for="name">Longitud:</label>
-                    <input type="text" class="form-control" placeholder="{{cus.name}}" name="name" value="{{ cus.name }}">
-                      @if(hasErrorFor('name'))
-                        <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('name') }}</div>
+                    <input type="text" class="form-control" placeholder="Longitud" name="longitude" id="lng">
+                      @if(hasErrorFor('longitude'))
+                        <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('longitude') }}</div>
                       @endif
                     </div>
+                    <div class="form-group">
+                      <label for="name">Estado</label>
+                      <select class="form-control form-control-lg" name="status">
+                          @if(cus.status)
+                          <option value="{{cus.status}}">Activo</option>
+                          @else
+                          <option value="{{cus.status}}">Inactivo</option>
+                          @endif
+                          <option value="0">Inactivo</option>
+                          <option value="1">Activo</option>
+                      </select>
+                        
+                      @if(hasErrorFor('status'))
+                        <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('status') }}</div>
+                      @endif
+                  </div>
                 <div class="buttons">
                   <a class="btn cancel-button" href="/customers">Cancelar</a>
                   <button type="submit" class="btn add-button">Agregar</button>
@@ -33,7 +53,8 @@
                   <div class="alert alert-danger mb-4">{{ flashMessage('notification.message') }}</div>
                 @endif
               </form>
-              <div id="map" style="height: 180px">
+              <input type="text" id="autocomplete" class="form-control">
+              <div id="map" style="height: 500px">
               </div>
             </div>
           </div>

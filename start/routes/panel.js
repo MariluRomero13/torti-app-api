@@ -16,6 +16,7 @@ Route.post('customers', 'CustomerController.store').as('customers.store').valida
 Route.get('/customers/edit/:id','CustomerController.edit').as('customers.edit')
 Route.put('customers/:id','CustomerController.update').as('customers.update').validator('Customer/StoreUpdateCustomer')
 Route.delete('/customers/delete/:id?','CustomerController.destroy').as('customers.delete')
+Route.put('customers/location/:id','LocationController.updateOrCreate').as('locations.updateOrCreate').validator('Location/StoreUpdateLocation')
 //Route.post('/customers/update/:rol_id?','CustomerController.update').as('customers.update')
 
 

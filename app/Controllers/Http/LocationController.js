@@ -31,6 +31,26 @@ class LocationController {
       data: location
     })
   }
+
+  async updateOrCreate({ params, response, request }) {
+    
+    const customerLocation = await Location.find({ customer_id: { $eq: params.id } },
+      { _id: 0, createdAt: 0, updatedAt: 0, __v: 0 })
+      
+    if(customerLocation.length>0){
+      const locationData = request.only(LocationUpdateFields)
+      const location = await Location.update({ customer_id: params.id }, locationData)
+    }else{
+      const locationData = request.only(LocationFields)
+      const location = await Location.create(locationData)
+    }
+    
+    return response.route('customers.index')
+
+
+    
+  }
+
 }
 
 module.exports = LocationController
