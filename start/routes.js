@@ -15,6 +15,7 @@
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
+
 Route.post('/login', 'AuthController.login').validator('Login')
 Route.post('/login/refresh-token', 'AuthController.generateTokenWithRefresh')
   .validator('LoginRefresh')
@@ -27,11 +28,16 @@ Route.get('get-routes-without-sale', 'AssignmentCustomerController.getRoutesWith
 
 // Sales
 Route.get('get-sales-history', 'SaleController.getSalesHistory').middleware('auth:jwt')
+Route.post('/save-sale', 'SaleController.store').middleware('auth:jwt')
 
 //Location
 Route.post('save-customer-location', 'LocationController.store').middleware('auth:jwt')
 Route.get('customer-location/:id', 'LocationController.show').middleware('auth:jwt')
 Route.put('update-customer-location/:id', 'LocationController.update').middleware('auth:jwt')
+
+// Pending payments
+Route.post('/save-pending-payment', 'PendingPaymentController.store').middleware('auth:jwt')
+Route.get('/get-pending-payment/:customer_id', 'PendingPaymentController.show').middleware('auth:jwt')
 
 
 require('./routes/panel')

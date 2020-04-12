@@ -59,3 +59,20 @@ DELIMITER $$
 call get_routes_without_sale (1,1);
 
 
+#Procedimiento para obtener el total
+DELIMITER $$
+create procedure getTotal
+(
+  customer_id int
+)
+begin
+  select (sum(ppd.quantity * pro.unit_price)) as total, (sum(ppd.quantity * pro.unit_price) - pp.deposit) as to_pay,
+  pp.deposit as deposit
+  from customers as c inner join pending_payments as pp on c.id = pp.customer_id
+  inner join pending_payment_details as ppd  on ppd.pending_payment_id = pp.id
+  inner join products as pro on pro.id = ppd.product_id
+  where c.id = customer_id;
+end $$
+DELIMITER $$
+
+call getTotal (2)

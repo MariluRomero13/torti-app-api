@@ -10,10 +10,11 @@
 const moment = require('moment');
 const User = use('App/Models/User')
 const Sale = use('App/Models/Sale')
+const SaleDetail = use('App/Models/SaleDetail')
 const Employee = use('App/Models/Employee')
 const Customer = use('App/Models/Customer')
 const Database = use('Database')
-
+const { validate } = use('Validator')
 class SaleController {
   async index ({ view, params, request, response }) {
     const page = params.page || 1
@@ -44,6 +45,39 @@ class SaleController {
   }
 
   async store ({ request, response }) {
+    const rules = {
+      customer_id: 'required',
+      employee_id: 'required',
+      details: 'required'
+    }
+
+    const validation = await validate(request.all(), rules)
+
+    if (validation.fails()) {
+      return response.ok({
+        status: false,
+        message: 'Ingresa los campos'
+      })
+    }
+
+    const saleData = request.only(Sale.store)
+    saleData.status = 1
+    const sale = await Sale.create(saleData)
+    const saleDetails = request.input('details')
+    const saleDetailsParsed = JSON.parse(saleDetails)
+    for (const saleDetail of saleDetailsParsed) {
+      const newSaleDetail = new SaleDetail()
+      newSaleDetail.sale_id = sale.id
+      newSaleDetail.product_id = saleDetail.product_id
+      newSaleDetail.quantity = saleDetail.quantity
+      await newSaleDetail.save()
+    }
+
+    return response.ok({
+      success: true,
+      message: 'Sale successfully created',
+      data: ''
+    })
   }
 
   async show ({ params, view }) {
