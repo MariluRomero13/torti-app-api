@@ -1,5 +1,4 @@
 @layout('main')
-
   @section('content')
     <h2 class="section-title">Clientes</h2>
     <div class="row section">
@@ -10,15 +9,7 @@
         </a>
       </div>
       <div class="col-lg-6 col-md-6 col-sm-6">
-        <div class="input-group flex-nowrap">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="addon-wrapping">
-              <i class="fas fa-search"></i>
-            </span>
-          </div>
-          <input type="text" class="form-control" placeholder="Buscar..." aria-label="buscar"
-            aria-describedby="addon-wrapping">
-        </div>
+        @!component('pagination.pagination_search_label', pagination = customers, presenter = 'PaginationPresenter')
       </div>
     </div>
     <div class="row">
@@ -30,43 +21,50 @@
                 <th scope="col">Nombre</th>
                 <th scope="col">Teléfono</th>
                 <th scope="col">Dirección</th>
-                <th scope="col">Estado</th>
+                <th scope="col">Habilitado</th>
                 <th scope="col">Opciones</th>
               </tr>
             </thead>
             <tbody>
-              @each(cus in customers)
+              @each(customer in customers.data)
                 <tr>
                   <td>
-                    {{ cus.name }}
+                    {{ customer.name }}
                   </td>
                   <td>
-                    {{ cus.phone }}
+                    {{ customer.phone }}
                   </td>
                   <td>
-                    {{ cus.address }}
+                    {{ customer.address }}
                   </td>
                   <td>
-                    @if(cus.status)
-                        Activo
-                        @else
-                        Inactivo
-                        @endif
+                    @if(customer.status)
+                      <button type="button" class="btn active-button">
+                        <i class="fas fa-check"></i>
+                      </button>
+                    @else
+                      <button type="button" class="btn inactive-button">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    @endif
                   </td>
                   <td>
-                    <a href="/locations/edit/{{cus.id}}" class="btn btn-primary btn-lg active float-right" role="button" aria-pressed="true"><i class="fas fa-map-signs"></i></i></a>
-                    <form action="{{'/customers/delete/'+cus.id+'?_method=DELETE'}}" method="POST">
-                      {{csrfField()}}
-                      <button type="submit" class="btn btn-secondary btn-lg btn-danger float-right">X</button>
-                    </form>
-                    <a href="/customers/edit/{{cus.id}}" class="btn btn-primary btn-lg active float-right" role="button" aria-pressed="true"><i class="fas fa-edit"></i></a>
-                  
-                    
+                    <a type="button" class="btn edit-button" href="/customers/{{ customer.id }}/edit">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    <a type="button" class="btn show-button" href="/show-location/{{ customer.id }}">
+                      <i class="fas fa-map-marker-alt"></i>
+                    </a>
                   </td>
+                </tr>
+              @else
+                <tr>
+                  <td colspan="3" class="text-center">¡Sin resultados!</td>
                 </tr>
               @endeach
             </tbody>
           </table>
+          @!component('pagination.pagination_buttons', pagination = customers, presenter = 'PaginationPresenter')
         </div>
       </div>
     </div>

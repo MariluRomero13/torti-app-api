@@ -11,52 +11,47 @@ const LocationModel = use('App/Models/Mongo/Location')
 const LocationFields = LocationModel.fields
 const LocationUpdateFields = LocationModel.updateFields
 const Location = LocationModel.Location
-
-
 const Customer = use('App/Models/Customer')
+const LocationController = use('App/Controllers/Http/LocationController')
+
 class CustomerController {
-  /**
-   * Show a list of all customers.
-   * GET customers
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async index ({ request, response, view }) {
-    const customers = await Customer.all()
-    return view.render('customers.index', { customers:customers.toJSON() })
+
+  async index ({ view, params, request, response }) {
+    const page = params.page || 1
+    const search = request.input('search') || ''
+    const customers = await Customer.query()
+                                    .where('name', 'LIKE', '%' + search + '%')
+                                    .paginate(page, 5)
+    const pagination = customers.toJSON()
+    pagination.route = 'customers.pagination'
+    if(pagination.lastPage < page && page != 1) {
+      response.route(pagination.route, { page: 1 }, null, true)
+    }
+    else {
+      pagination.offset = (pagination.page - 1) * pagination.perPage
+      pagination.search = search
+      return view.render('customers.index', { customers: pagination })
+    }
   }
 
-  /**
-   * Render a form to be used for creating a new customer.
-   * GET customers/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
   async create ({ request, response, view }) {
-    return view.render('customers.create')
+    const url = this.getMapKey()
+    return view.render('customers.create', { url: url })
   }
 
-  /**
-   * Create/save a new customer.
-   * POST customers
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async store ({ request, response }) {
-    const cus = request.only(Customer.store)
+  async store ({ request, response, session }) {
     try {
-      await Customer.create(cus)
-      return response.route('customers.index')
+      const customer = request.only(Customer.store)
+      const newCustomer = await Customer.create(customer)
+      const locationData = request.only(LocationFields)
+      locationData.customer_id = newCustomer.id
+      const newLocation = new LocationController()
+      const locationSaved = await newLocation.store({ locationData })
+      if (locationSaved) {
+        return response.route('customers.pagination')
+      }
     } catch (error) {
-      session.flashOnly(['name','phone','address','status'])
+      session.flashOnly(['name','phone','address', 'latitude'])
       session.flash({
         notification: {
           type: 'danger',
@@ -67,49 +62,33 @@ class CustomerController {
     }
   }
 
-  /**
-   * Display a single customer.
-   * GET customers/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show ({ params, request, response, view }) {
+  async show ({ params, view }) {
+    const location = new LocationController()
+    const customerLocation = await location.getLocation({ params })
+    const url = this.getMapKey()
+    return view.render('customers.location', { location: customerLocation[0], url })
   }
 
-  /**
-   * Render a form to update an existing customer.
-   * GET customers/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
   async edit ({ params, request, response, view }) {
-    const cus = await Customer.find(params.id)
-    return view.render('customers.edit',{
-      cus
-    })
+    const customer = await Customer.find(params.id)
+    const url = this.getMapKey()
+    const location = new LocationController()
+    const customerLocation = await location.getLocation({ params })
+    return view.render('customers.edit', { customer, url, location: customerLocation[0] })
   }
 
-  /**
-   * Update customer details.
-   * PUT or PATCH customers/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async update ({ params, request, response }) {
     try {
-      const cus = await Customer.findOrFail(params.id)
-      const cusData = request.only(Customer.update)
-      cus.merge(cusData)
-      await cus.save()
-      return response.route('customers.index')
+      const customer = await Customer.findOrFail(params.id)
+      const customerData = request.only(Customer.update)
+      customer.merge(customerData)
+      await customer.save()
+      const location = new LocationController()
+      const locationData = request.only(LocationUpdateFields)
+      const locationUpdated = await location.update({ params, locationData })
+      if (locationUpdated) {
+        return response.route('customers.pagination')
+      }
     } catch(error) {
       session.flash({
         notification: {
@@ -121,32 +100,16 @@ class CustomerController {
     }
   }
 
-  /**
-   * Delete a customer with id.
-   * DELETE customers/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async destroy ({ params, request, response }) {
     const cus = await Customer.find(params.id)
     await cus.delete()
     return response.redirect('/customers')
   }
 
-  async editLocation({params,request,response,view}){
-    const cus = await Customer.find(params.id)
-    const customerLocation = await Location.find({ customer_id: { $eq: params.id } },
-      { _id: 0, createdAt: 0, updatedAt: 0, __v: 0 })
-    
-      return view.render('locations.edit',{
-        customerLocation,
-        cus
-      })
+  getMapKey() {
+    return process.env.MAP_KEY
   }
 
-  
 }
 
 module.exports = CustomerController

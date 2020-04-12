@@ -106,3 +106,15 @@
   font-weight: bold;
   color: #212121;
 }
+
+#map {
+  height: 370px
+}
+
+.hidden {
+  display: none;
+}
+
+.back-button {
+  margin-top: 1%;
+}

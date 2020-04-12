@@ -1,0 +1,45 @@
+@layout('main')
+  @section('scripts')
+    <script>
+      var map;
+      var marker;
+      const { latitude, longitude } = {{ location }}
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: latitude, lng: longitude },
+          zoom: 13
+        });
+
+        marker = new google.maps.Marker({
+          position: {lat: latitude, lng: longitude },
+          map: map,
+          draggable: true
+
+        });
+        marker.addListener('dragend', function (evt) {
+          $("#latitude").val(evt.latLng.lat());
+          $("#longitude").val(evt.latLng.lng());
+        });
+      }
+    </script>
+  @endsection
+  @section('content')
+    <div id="example">
+      <div class="row form-card">
+        <div class="col-sm-12 col-md-12 col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <div id="map" style="height: 460px !important;">
+              </div>
+              <div class="buttons">
+                <a class="btn cancel-button back-button" href="/customers-page">Volver</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endsection
+  @section('script')
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ url }}&callback=initMap&libraries=places"></script>
+  @endsection

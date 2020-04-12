@@ -9,13 +9,14 @@ Route.post('/logout-panel', 'AuthController.logoutPanel').as('logout-panel')
 Route.get('home', 'HomeController.index').as('home').middleware('auth:session')
 
 //Customers
-Route.get('customers','CustomerController.index').as('customers.index').middleware('auth:session')
+Route.get('customers-page/:page?', 'CustomerController.index').as('customers.pagination').middleware('auth:session')
 Route.get('customers/create','CustomerController.create').as('customers.create').middleware('auth:session')
 Route.post('customers', 'CustomerController.store').as('customers.store').validator('Customer/StoreUpdateCustomer').middleware('auth:session')
-Route.get('/customers/edit/:id','CustomerController.edit').as('customers.edit')
+Route.get('/customers/:id/edit','CustomerController.edit').as('customers.edit')
 Route.put('customers/:id','CustomerController.update').as('customers.update').validator('Customer/StoreUpdateCustomer')
 Route.delete('/customers/delete/:id?','CustomerController.destroy').as('customers.delete')
 Route.put('customers/location/:id','LocationController.updateOrCreate').as('locations.updateOrCreate').validator('Location/StoreUpdateLocation')
+Route.get('/show-location/:id','CustomerController.show').as('customers.show')
 
 // Employees
 Route.get('employees-page/:page?', 'EmployeeController.index').as('employees.pagination')
@@ -48,6 +49,3 @@ Route.delete('/roles/delete/:id?','RoleController.destroy').as('roles.delete')
 // Sales
 Route.get('sales-page/:page?', 'SaleController.index').as('sales.pagination')
 Route.get('sales/:id', 'SaleController.show').as('sales.show').middleware('auth:session')
-
-// Locations
-Route.get('locations/edit/:id','CustomerController.editLocation').as('Customers.editLocation').middleware('auth:session')

@@ -1,62 +1,93 @@
 @layout('main')
+  @section('scripts')
+    <script>
+      var map;
+      var marker;
+      const { latitude, longitude } = {{ location }}
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: latitude, lng: longitude },
+          zoom: 13
+        });
 
+        marker = new google.maps.Marker({
+          position: {lat: latitude, lng: longitude },
+          map: map,
+          draggable: true
+
+        });
+        marker.addListener('dragend', function (evt) {
+          $("#latitude").val(evt.latLng.lat());
+          $("#longitude").val(evt.latLng.lng());
+        });
+      }
+    </script>
+  @endsection
   @section('content')
     <div id="example">
       <div class="row form-card">
-        <div class="col-sm-12 col-md-12 col-lg-8">
+        <div class="col-sm-12 col-md-12 col-lg-6">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Editar cliente</h5>
-              <form action="{{'/customers/'+cus.id+'?_method=PUT'}}" method="POST">
+              <form action="{{'/customers/'+customer.id+'?_method=PUT'}}" method="POST">
                 {{ csrfField() }}
                 <div class="form-group">
                   <label for="name">Nombre:</label>
-                <input type="text" class="form-control" placeholder="{{cus.name}}" name="name" value="{{ cus.name }}">
-                  @if(hasErrorFor('name'))
-                    <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('name') }}</div>
-                  @endif
-                </div>
+                  <input type="text" class="form-control" name="name" value="{{ customer.name }}">
+                    @if(hasErrorFor('name'))
+                      <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('name') }}</div>
+                    @endif
+                  </div>
                 <div class="form-group">
                   <label for="unit_price">Teléfono:</label>
-                  <input type="text" class="form-control" placeholder="{{cus.phone}}" name="phone" value="{{ cus.phone }}">
+                  <input type="text" class="form-control" name="phone" value="{{ customer.phone }}">
                   @if(hasErrorFor('phone'))
                     <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('phone') }}</div>
                   @endif
                 </div>
                 <div class="form-group">
-                    <label for="name">Dirección:</label>
-                <input type="text" class="form-control" placeholder="{{cus.address}}" name="address" value="{{ cus.address}}">
-                    @if(hasErrorFor('address'))
-                      <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('address') }}</div>
-                    @endif
+                  <label for="name">Dirección:</label>
+                  <input type="text" class="form-control" name="address" value="{{ customer.address }}">
+                  @if(hasErrorFor('address'))
+                    <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('address') }}</div>
+                  @endif
                 </div>
                 <div class="form-group">
-                    <label for="name">Estado</label>
-                    <select class="form-control form-control-lg" name="status">
-                        @if(cus.status)
-                        <option value="{{cus.status}}">Activo</option>
-                        @else
-                        <option value="{{cus.status}}">Inactivo</option>
-                        @endif
-                        <option value="0">Inactivo</option>
-                        <option value="1">Activo</option>
-                    </select>
-                      
-                    @if(hasErrorFor('status'))
-                      <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('status') }}</div>
-                    @endif
-                </div>
-                <div class="buttons">
-                  <a class="btn cancel-button" href="/customers">Cancelar</a>
-                  <button type="submit" class="btn add-button">Agregar</button>
+                  <label for="status">Habilitado:</label>
+                  <select class="form-control" value="{{ customer.status }}" name="status">
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                  </select>
+                  @if(hasErrorFor('status'))
+                    <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('status') }}</div>
+                  @endif
                 </div>
                 @if(flashMessage('notification.type') == 'danger')
                   <div class="alert alert-danger mb-4">{{ flashMessage('notification.message') }}</div>
                 @endif
+                  <div class="hidden">
+                    <input type="text" class="form-control" id="latitude" name="latitude" value="{{ location.latitude }}">
+                    <input type="text" class="form-control" id="longitude" name="longitude" value="{{ location.longitude }}">
+                  </div>
+                @if(hasErrorFor('latitude'))
+                  <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('latitude') }}</div>
+                @endif
+                <div class="buttons">
+                  <a class="btn cancel-button" href="/customers-page">Cancelar</a>
+                  <button type="submit" class="btn add-button">Actualizar</button>
+                </div>
               </form>
             </div>
           </div>
         </div>
+        <div class="col-sm-12 col-md-12 col-lg-6">
+          <div id="map" style="height: 460px !important;">
+          </div>
+        </div>
       </div>
     </div>
+  @endsection
+  @section('script')
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ url }}&callback=initMap&libraries=places"></script>
   @endsection

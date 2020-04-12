@@ -10,7 +10,7 @@ class StoreUpdateCustomer {
       name: 'required|max:45|string',
       phone: 'required|number',
       address:'required|max:45|string',
-      status:'required|number'
+      latitude: 'required'
     }
   }
 
@@ -24,8 +24,7 @@ class StoreUpdateCustomer {
       'address.required': 'Este campo es obligatorio',
       'address.max': 'El limite de caracteres es 45',
       'address.string': 'Solo se permiten letras',
-      'status.number': 'Solo se admiten numeros',
-      'status.required': 'Este campo es obligatorio'
+      'latitude.required': 'Las coordenadas son obligatoria'
     }
   }
 }

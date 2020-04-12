@@ -1,9 +1,32 @@
 @layout('main')
+  @section('scripts')
+    <script>
+      var map;
+      var marker;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 25.5529986, lng: -103.3927221},
+          zoom: 13
+        });
 
+        marker = new google.maps.Marker({
+          position: {lat: 25.5529986, lng: -103.3927221},
+          map: map,
+          draggable: true
+
+        });
+        marker.addListener('dragend', function (evt) {
+          $("#latitude").val(evt.latLng.lat());
+          $("#longitude").val(evt.latLng.lng());
+        });
+      }
+    </script>
+  @endsection
   @section('content')
+    {{ url }}
     <div id="example">
       <div class="row form-card">
-        <div class="col-sm-12 col-md-12 col-lg-8">
+        <div class="col-sm-12 col-md-12 col-lg-6">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Agregar cliente</h5>
@@ -18,40 +41,44 @@
                 </div>
                 <div class="form-group">
                   <label for="unit_price">Teléfono:</label>
-                  <input type="text" class="form-control" placeholder="numero de teléfono" name="phone" value="{{ old('phone', '') }}">
+                  <input type="text" class="form-control" placeholder="Teléfono" name="phone" value="{{ old('phone', '') }}">
                   @if(hasErrorFor('phone'))
                     <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('phone') }}</div>
                   @endif
                 </div>
                 <div class="form-group">
-                    <label for="name">Dirección:</label>
-                    <input type="text" class="form-control" placeholder="Dirección" name="address" value="{{ old('address', '') }}">
-                    @if(hasErrorFor('address'))
-                      <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('address') }}</div>
-                    @endif
-                </div>
-                <div class="form-group">
-                    <label for="name">Estado</label>
-                    <select class="form-control form-control-lg" name="status">
-                        <option value="0">Inactivo</option>
-                        <option value="1">Activo</option>
-                    </select>
-                      
-                    @if(hasErrorFor('status'))
-                      <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('status') }}</div>
-                    @endif
+                  <label for="unit_price">Dirección:</label>
+                  <input type="text" class="form-control" placeholder="Dirección" name="address" value="{{ old('address', '') }}">
+                  @if(hasErrorFor('address'))
+                    <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('address') }}</div>
+                  @endif
                 </div>
                 <div class="buttons">
-                  <a class="btn cancel-button" href="/customers">Cancelar</a>
+                  <a class="btn cancel-button" href="/customers-page">Cancelar</a>
                   <button type="submit" class="btn add-button">Agregar</button>
                 </div>
                 @if(flashMessage('notification.type') == 'danger')
                   <div class="alert alert-danger mb-4">{{ flashMessage('notification.message') }}</div>
                 @endif
+                <div class="hidden">
+                  <input type="text" class="form-control" id="latitude" name="latitude">
+                  <input type="text" class="form-control" id="longitude" name="longitude">
+                </div>
+                @if(hasErrorFor('latitude'))
+                <div class="alert alert-danger mb-2 mt-2">{{ getErrorFor('latitude') }}</div>
+                @endif
               </form>
             </div>
           </div>
         </div>
+        <div class="col-sm-12 col-md-12 col-lg-6">
+          <div id="map">
+          </div>
+        </div>
       </div>
     </div>
+  @endsection
+
+  @section('script')
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ url }}&callback=initMap&libraries=places"></script>
   @endsection

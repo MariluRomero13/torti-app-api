@@ -32,6 +32,7 @@
     "moment": "^2.24.0",
     "mongoose": "^5.9.7",
     "mysql": "^2.18.1",
+    "node-env-file": "^0.1.8",
     "pg": "^7.18.2"
   },
   "devDependencies": {},
