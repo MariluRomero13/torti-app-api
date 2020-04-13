@@ -1,0 +1,62 @@
+@layout('main')
+  @section('content')
+    <h2 class="section-title">Pagos pendientes</h2>
+    <div class="row section">
+      <div class="col-lg-12 col-md-12 col-sm-8">
+        @!component('pagination.pagination_date_search', pagination = payments, presenter = 'PaginationPresenter')
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="table-responsive">
+          <table class="table table-hover table-styles">
+            <thead>
+              <tr>
+                <th scope="col">Cliente</th>
+                <th scope="col">Total</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Habilitado</th>
+                <th scope="col">Opciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @each(payment in payments.data)
+              <tr>
+                <td>
+                  {{ payment.customer }}
+                </td>
+                <td>
+                  $ {{ payment.total }}
+                </td>
+                <td>
+                  {{ payment.payment_date }}
+                </td>
+                <td>
+                  @if(payment.payment_type)
+                    <button type="button" class="btn active-button">
+                      <i class="fas fa-check"></i>
+                    </button>
+                  @else
+                    <button type="button" class="btn inactive-button">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  @endif
+                </td>
+                <td>
+                  <a type="button" class="btn show-button" href="/getPayments/{{ payment.pending_payment_id }}">
+                    <i class="fas fa-sticky-note"></i>
+                  </a>
+                </td>
+              </tr>
+              @else
+                <tr>
+                  <td colspan="3" class="text-center">¡Sin resultados!</td>
+                </tr>
+              @endeach
+            </tbody>
+          </table>
+          @!component('pagination.pagination_buttons', pagination = payments, presenter = 'PaginationPresenter')
+        </div>
+      </div>
+    </div>
+  @endsection

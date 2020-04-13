@@ -71,7 +71,7 @@ begin
   from customers as c inner join pending_payments as pp on c.id = pp.customer_id
   inner join pending_payment_details as ppd  on ppd.pending_payment_id = pp.id
   inner join products as pro on pro.id = ppd.product_id
-  where c.id = customer_id;
+  where c.id = customer_id and pp.status = 1;
 end $$
 DELIMITER $$
 

@@ -5,16 +5,15 @@
         <div class="col-sm-12 col-md-12 col-lg-12">
           <div class="card">
             <div class="card-body">
-              <div id="sale">
-                <h5 class="card-title">Detalle de la venta</h5>
+              <div id="payment">
+                <h5 class="card-title">Detalle del pago</h5>
                 <div id="sale-data">
-                  <span><b>Vendedor: </b> {{ employee.name }} {{ employee.paternal }} {{ employee.maternal }}</span>
                   <span class="name"><b>Cliente: </b> {{ customer.name }} </span>
-                  <span class="name"><b>Tipo: </b>
-                    @if(sale.status)
-                      Vendido
+                  <span class="name"><b>Habilitado: </b>
+                    @if(payment.status)
+                      Si
                     @else
-                      Pago Pendiente
+                      No
                     @endif
                   </span>
                 </div>
@@ -30,7 +29,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          @each(detail in sale_details)
+                          @each(detail in payment_details)
                             <tr>
                               <td>
                                 {{ detail.product }}
@@ -54,7 +53,7 @@
                 <a type="button" class="btn edit-button" onclick="generatePDF()">
                   <i class="fas fa-file-pdf"></i>
                 </a>
-                <a class="btn cancel-button" href="/sales-page">Regresar</a>
+                <a class="btn cancel-button" href="/payments-page">Regresar</a>
               </div>
             </div>
           </div>
@@ -65,10 +64,10 @@
   @section('script')
     <script>
       function generatePDF() {
-        const element = document.getElementById("sale");
+        const element = document.getElementById("payment");
         const opt = {
             margin:       1,
-            filename:     'sales_details.pdf',
+            filename:     'payments_details.pdf',
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2 },
             jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }

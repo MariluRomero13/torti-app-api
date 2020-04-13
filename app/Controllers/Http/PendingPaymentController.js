@@ -7,42 +7,42 @@
 /**
  * Resourceful controller for interacting with pendingpayments
  */
+const Customer = use('App/Models/Customer')
 const PendingPayment = use('App/Models/PendingPayment')
 const PendingPaymentDetail = use('App/Models/PendingPaymentDetail')
+const Database = use('Database')
 const { validate } = use('Validator')
 class PendingPaymentController {
-  /**
-   * Show a list of all pendingpayments.
-   * GET pendingpayments
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async index ({ request, response, view }) {
+
+  async index ({ request, response, view, params }) {
+    const page = params.page || 1
+    const search = request.input('search') || ''
+    const payments = await Database
+                            .select(['pp.id as pending_payment_id', 'c.name as customer', 'pp.status as payment_type',
+                              Database.raw('SUM(ppd.quantity * p.unit_price) as total'),
+                              Database.raw('DATE_FORMAT(pp.created_at, "%d-%m-%Y") as payment_date')])
+                            .from('pending_payments as pp')
+                            .innerJoin('customers as c', 'c.id', 'pp.customer_id')
+                            .innerJoin('pending_payment_details as ppd', 'ppd.pending_payment_id', 'pp.id')
+                            .innerJoin('products as p', 'ppd.product_id', 'p.id')
+                            .where('pp.created_at', 'LIKE', '%' + search + '%')
+                            .groupBy('pp.id')
+                            .paginate(page, 5)
+    const pagination = payments
+    pagination.route = 'payments.pagination'
+    if(pagination.lastPage < page && page != 1) {
+      response.route(pagination.route, { page: 1 }, null, true)
+    }
+    else {
+      pagination.offset = (pagination.page - 1) * pagination.perPage
+      pagination.search = search
+      return view.render('payments.index', { payments: pagination })
+    }
   }
 
-  /**
-   * Render a form to be used for creating a new pendingpayment.
-   * GET pendingpayments/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
   async create ({ request, response, view }) {
   }
 
-  /**
-   * Create/save a new pendingpayment.
-   * POST pendingpayments
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async store ({ request, response }) {
     const rules = {
       customer_id: 'required',
@@ -78,19 +78,13 @@ class PendingPaymentController {
     })
   }
 
-  /**
-   * Display a single pendingpayment.
-   * GET pendingpayments/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
   async show ({ params, response }) {
     const pendingPayment = await PendingPayment.findBy('customer_id', params.customer_id)
-    const pendingPaymentDetails = await PendingPaymentDetail.query()
-      .where('pending_payment_id', pendingPayment.id).fetch()
+    const pendingPaymentDetails = await Database
+      .select('ppd.quantity as quantity', 'p.id as product_id', 'p.name as product')
+      .from('pending_payment_details as ppd')
+      .innerJoin('products as p', 'ppd.product_id', 'p.id')
+      .where('ppd.pending_payment_id', pendingPayment.id)
 
     const paymentsData = await Database.raw('call getTotal(?)',[params.customer_id])
     return response.ok(
@@ -100,39 +94,32 @@ class PendingPaymentController {
       })
   }
 
-
-  /**
-   * Render a form to update an existing pendingpayment.
-   * GET pendingpayments/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
   async edit ({ params, request, response, view }) {
   }
 
-  /**
-   * Update pendingpayment details.
-   * PUT or PATCH pendingpayments/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async update ({ params, request, response }) {
   }
 
-  /**
-   * Delete a pendingpayment with id.
-   * DELETE pendingpayments/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async destroy ({ params, request, response }) {
+  }
+
+  async getPaymentDetail({ params, view }) {
+    const payment = await PendingPayment.find(params.id)
+    const customer = await Customer.find(payment.customer_id)
+    const pendingPaymentDetails = await Database
+    .select('p.name as product', 'p.unit_price as price', 'ppd.quantity as quantity')
+    .from('pending_payment_details as ppd')
+    .innerJoin('products as p', 'ppd.product_id', 'p.id')
+    .where('ppd.pending_payment_id', payment.id)
+
+    const total = await Database
+    .select([Database.raw('SUM(ppd.quantity * p.unit_price) as total')])
+    .from('pending_payment_details as ppd')
+    .innerJoin('products as p', 'ppd.product_id', 'p.id')
+    .where('ppd.pending_payment_id', payment.id)
+
+    return view.render('payments.detail', { payment: payment.toJSON(), customer: customer.toJSON(),
+      payment_details: pendingPaymentDetails, total: total })
   }
 }
 

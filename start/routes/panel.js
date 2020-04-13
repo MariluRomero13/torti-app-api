@@ -47,5 +47,9 @@ Route.put('roles/:id', 'RoleController.update').as('roles.update').validator('Ro
 Route.delete('/roles/delete/:id?','RoleController.destroy').as('roles.delete')
 
 // Sales
-Route.get('sales-page/:page?', 'SaleController.index').as('sales.pagination')
+Route.get('sales-page/:page?', 'SaleController.index').as('sales.pagination').middleware('auth:session')
 Route.get('sales/:id', 'SaleController.show').as('sales.show').middleware('auth:session')
+
+// Payments
+Route.get('payments-page/:page?', 'PendingPaymentController.index').as('payments.pagination').middleware('auth:session')
+Route.get('getPayments/:id', 'PendingPaymentController.getPaymentDetail').as('payments.getPaymentDetail').middleware('auth:session')
