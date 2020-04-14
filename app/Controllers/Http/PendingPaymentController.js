@@ -8,6 +8,10 @@
  * Resourceful controller for interacting with pendingpayments
  */
 const Customer = use('App/Models/Customer')
+const Sale = use('App/Models/Sale')
+const SaleDetail = use('App/Models/SaleDetail')
+const User = use('App/Models/User')
+const Employee = use('App/Models/Employee')
 const PendingPayment = use('App/Models/PendingPayment')
 const PendingPaymentDetail = use('App/Models/PendingPaymentDetail')
 const Database = use('Database')
@@ -79,14 +83,14 @@ class PendingPaymentController {
   }
 
   async show ({ params, response }) {
-    const pendingPayment = await PendingPayment.findBy('customer_id', params.customer_id)
+    const pendingPayment = await PendingPayment.find(params.id)
     const pendingPaymentDetails = await Database
       .select('ppd.quantity as quantity', 'p.id as product_id', 'p.name as product')
       .from('pending_payment_details as ppd')
       .innerJoin('products as p', 'ppd.product_id', 'p.id')
       .where('ppd.pending_payment_id', pendingPayment.id)
 
-    const paymentsData = await Database.raw('call getTotal(?)',[params.customer_id])
+    const paymentsData = await Database.raw('call getTotal(?)',[pendingPayment.id])
     return response.ok(
       { pendingPayment: pendingPayment ,
         pendingPaymentDetails: pendingPaymentDetails,
@@ -120,6 +124,77 @@ class PendingPaymentController {
 
     return view.render('payments.detail', { payment: payment.toJSON(), customer: customer.toJSON(),
       payment_details: pendingPaymentDetails, total: total })
+  }
+
+  async setDeposit({ request, response, auth }) {
+    const rules = {
+      payment_id: 'required|number',
+      newDeposit: 'required|number'
+    }
+
+    const validation = await validate(request.all(), rules)
+    if (validation.fails()) {
+      return response.ok({
+        status: false,
+        message: 'Ingresa los campos para continuar'
+      })
+    }
+    const { payment_id, newDeposit } = request.only(['payment_id', 'newDeposit'])
+    const payment = await PendingPayment.find(payment_id)
+    const paymentsData = await Database.raw('call getTotal(?)',[payment.id])
+    const { total, to_pay, deposit } = paymentsData[0][0][0]
+    let status = 0
+    let message = ''
+    if (newDeposit < to_pay) {
+      payment.deposit = parseFloat(deposit) + parseFloat(newDeposit);
+      await payment.save()
+      status = 0
+      message = 'Deposit successfully saved'
+    } else if (newDeposit > to_pay) {
+      status = 2
+      message = "Deposit is greater than total to pay"
+    } else {
+      const userLogged = await auth.getUser()
+      const user = await User.find(userLogged.id)
+      const employee = await Employee.findBy('user_id', user.id)
+      const pendingPaymentDetails = await PendingPaymentDetail.query()
+        .where('pending_payment_id',payment.id).fetch()
+      const data = { customer_id: payment.customer_id, employee_id: employee.id,
+        details: pendingPaymentDetails }
+      const sale = await this.saveSale({ data })
+
+      if (sale) {
+        payment.status = 0
+        payment.deposit = parseFloat(deposit) + parseFloat(newDeposit);
+        await payment.save()
+        status = 1
+        message = 'Pending payment was removed and added in sales'
+      }
+    }
+
+    return response.ok({
+      status: status,
+      message: message
+    })
+  }
+
+  async saveSale({ data }) {
+    const { customer_id, employee_id, details } = data
+    const saleData = {
+      customer_id: customer_id,
+      employee_id: employee_id,
+      status: 0
+    }
+    const sale = await Sale.create(saleData)
+    for (const saleDetail of details.toJSON()) {
+      const newSaleDetail = new SaleDetail()
+      newSaleDetail.sale_id = sale.id
+      newSaleDetail.product_id = saleDetail.product_id
+      newSaleDetail.quantity = saleDetail.quantity
+      await newSaleDetail.save()
+    }
+
+    return sale
   }
 }
 

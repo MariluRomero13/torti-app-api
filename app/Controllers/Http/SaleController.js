@@ -114,6 +114,27 @@ class SaleController {
     return assignments[0][0]
   }
 
+  async getSaleDetail({ params, response }) {
+    const sale = await Sale.find(params.id)
+    const customer = await Customer.find(sale.customer_id)
+    const saleDetails = await Database
+    .select('p.name as product', 'p.unit_price as price', 'sd.quantity as quantity')
+    .from('sale_details as sd')
+    .innerJoin('products as p', 'sd.product_id', 'p.id')
+    .where('sd.sale_id', sale.id)
+    const total = await Database
+    .select([Database.raw('SUM(sd.quantity * p.unit_price) as total')])
+    .from('sale_details as sd')
+    .innerJoin('products as p', 'sd.product_id', 'p.id')
+    .where('sd.sale_id', sale.id)
+
+    return response.ok({
+      customer: customer,
+      sale_details: saleDetails,
+      total: total
+    })
+  }
+
 }
 
 module.exports = SaleController
