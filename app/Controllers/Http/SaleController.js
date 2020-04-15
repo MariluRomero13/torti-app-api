@@ -44,10 +44,9 @@ class SaleController {
     }
   }
 
-  async store ({ request, response }) {
+  async store ({ request, response, auth }) {
     const rules = {
       customer_id: 'required',
-      employee_id: 'required',
       details: 'required'
     }
 
@@ -60,8 +59,12 @@ class SaleController {
       })
     }
 
+    const userLogged = await auth.getUser()
+    const user = await User.find(userLogged.id)
+    const employee = await Employee.findBy('user_id', user.id)
     const saleData = request.only(Sale.store)
     saleData.status = 1
+    saleData.employee_id = employee.id
     const sale = await Sale.create(saleData)
     const saleDetails = request.input('details')
     const saleDetailsParsed = JSON.parse(saleDetails)
