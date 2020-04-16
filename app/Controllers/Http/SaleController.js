@@ -47,7 +47,9 @@ class SaleController {
   async store ({ request, response, auth }) {
     const rules = {
       customer_id: 'required',
-      details: 'required'
+      details: 'required|array',
+      'details.*.product_id': 'required|integer',
+      'details.*.quantity': 'required|integer|min:1'
     }
 
     const validation = await validate(request.all(), rules)
@@ -65,17 +67,18 @@ class SaleController {
     const saleData = request.only(Sale.store)
     saleData.status = 1
     saleData.employee_id = employee.id
-    const sale = await Sale.create(saleData)
     const saleDetails = request.input('details')
-    const saleDetailsParsed = JSON.parse(saleDetails)
-    for (const saleDetail of saleDetailsParsed) {
-      const newSaleDetail = new SaleDetail()
-      newSaleDetail.sale_id = sale.id
-      newSaleDetail.product_id = saleDetail.product_id
-      newSaleDetail.quantity = saleDetail.quantity
-      await newSaleDetail.save()
-    }
+    const trx = await Database.beginTransaction()
 
+    try {
+      const sale = await Sale.create(saleData, trx)
+      await sale.sale_details().createMany(saleDetails, trx)
+    } catch(error) {
+      await trx.rollback()
+      return response.badRequest()
+    }
+    
+    await trx.commit()
     return response.ok({
       success: true,
       message: 'Sale successfully created',
