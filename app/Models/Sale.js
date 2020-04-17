@@ -5,15 +5,15 @@ const Model = use('Model')
 
 class Sale extends Model {
   sale_details () {
-    return this.belongsTo('App/Model/SaleDetail', 'sale_id')
+    return this.hasMany('App/Models/SaleDetail', 'id', 'sale_id')
   }
 
   customer () {
-    return this.hasMany('App/Model/Customer', 'customer_id')
+    return this.hasMany('App/Models/Customer', 'customer_id')
   }
 
   employee () {
-    return this.hasMany('App/Model/Employee', 'employee_id')
+    return this.hasMany('App/Models/Employee', 'employee_id')
   }
 
   static get store () {

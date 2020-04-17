@@ -8,7 +8,7 @@ class PendingPaymentDetail extends Model {
     return this.hasMany('App/Models/PendingPayment', 'pending_payment_id')
   }
 
-  product () {
+  products () {
     return this.hasMany('App/Models/Product', 'product_id')
   }
 

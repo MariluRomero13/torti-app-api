@@ -6,11 +6,11 @@ const Model = use('Model')
 class SaleDetail extends Model {
 
   products () {
-    return this.hasMany('App/Model/Product', 'product_id')
+    return this.hasMany('App/Models/Product', 'product_id')
   }
 
   sale () {
-    return this.hasMany('App/Model/Sale', 'sale_id')
+    return this.belongsTo('App/Models/Sale', 'sale_id')
   }
 
   static get store () {

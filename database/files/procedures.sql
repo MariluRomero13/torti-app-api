@@ -45,9 +45,9 @@ CREATE procedure get_routes_without_sale
 	employee int
 )
 begin
-	select  distinct c.id, c.name as customer, IF(t1.pendiente = 1, t1.pendiente, 0) as pending_payment from assignment_customers as ac
+	select  distinct c.id, c.name as customer, IF(t1.pendiente = 1, t1.pendiente, 0) as pending_payment, IF(t1.payment_id >= 1, t1.payment_id, 0) as payment_id from assignment_customers as ac
 	inner join employees as e on e.id = ac.employee_id
-	inner join customers as c on c.id = ac.customer_id left join (select c.id as customer_id, count(pp.id) as pendiente
+	inner join customers as c on c.id = ac.customer_id left join (select c.id as customer_id, count(pp.id) as pendiente, pp.id as payment_id
 	from customers as c inner join pending_payments as pp on pp.customer_id = c.id where pp.status = 1) as t1 on t1.customer_id = c.id
 	where  ac.employee_id = employee and ac.day = current_day and c.id not in (select c.id as customer_id  from customers as c
 	inner join assignment_customers as ac on ac.customer_id = c.id
@@ -59,3 +59,20 @@ DELIMITER $$
 call get_routes_without_sale (1,1);
 
 
+#Procedimiento para obtener el total
+DELIMITER $$
+create procedure getTotal
+(
+  id int
+)
+begin
+  select (sum(ppd.quantity * pro.unit_price)) as total, (sum(ppd.quantity * pro.unit_price) - pp.deposit) as to_pay,
+  pp.deposit as deposit
+  from customers as c inner join pending_payments as pp on c.id = pp.customer_id
+  inner join pending_payment_details as ppd  on ppd.pending_payment_id = pp.id
+  inner join products as pro on pro.id = ppd.product_id
+  where pp.id = id and pp.status = 1;
+end $$
+DELIMITER $$
+
+call getTotal (2)
