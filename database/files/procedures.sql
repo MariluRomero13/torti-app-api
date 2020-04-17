@@ -76,3 +76,27 @@ end $$
 DELIMITER $$
 
 call getTotal (2)
+
+-- este procedimiento regresa la informacion en para el customerassignment y puede recibir como parametro un nombre para buscarlo
+
+DELIMITER //
+
+	CREATE PROCEDURE get_assignments(IN search CHAR(50))
+	BEGIN 
+		SELECT 
+		a_c.id AS assignment_id,
+		cus.id AS customer_id,
+		cus.name AS name,
+		emp.name AS employee,
+		cus.address AS address,
+		GROUP_CONCAT(DAY) AS days
+		FROM assignment_customers AS a_c
+					right JOIN customers AS cus ON a_c.customer_id=cus.id
+					left JOIN employees AS emp  ON a_c.employee_id=emp.id
+					WHERE cus.name LIKE CONCAT('%',search,'%')
+					GROUP BY a_c.customer_id;
+	END//
+	
+DELIMITER ;
+
+CALL get_assignments('')
