@@ -5,11 +5,11 @@ const Model = use('Model')
 
 class AssignmentCustomer extends Model {
   employees () {
-    return this.belongsTo('App/Models/AssignmentCustomer', 'employee_id')
+    return this.belongsTo('App/Models/Employee', 'employee_id')
   }
 
   customers () {
-    return this.belongsTo('App/Models/AssignmentCustomer', 'customer_id')
+    return this.belongsTo('App/Models/Customer', 'customer_id')
   }
 
   static get store() {

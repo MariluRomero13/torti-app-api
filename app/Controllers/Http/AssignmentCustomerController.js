@@ -11,6 +11,8 @@ const moment = require('moment');
 const User = use('App/Models/User')
 const Employee = use('App/Models/Employee')
 const Database = use('Database')
+const AssignmentCustomer = use('App/Models/AssignmentCustomer')
+const Customer = use('App/Models/Customer')
 class AssignmentCustomerController {
   /**
    * Show a list of all assignmentcustomers.
@@ -21,8 +23,29 @@ class AssignmentCustomerController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
-  }
+ 
+  async index ({ request, response, view,params }) {
+    const search = request.input('search') || ''
+    const employees = await Employee.all()
+    const assignments = await Database.raw('call get_assignments(?)',[search])
+    console.log(assignments[0][0])
+    var arrayassignments=[]
+    console.log(arrayassignments)
+    assignments[0][0].forEach(function(item,index,array){
+      if(item.days){
+        item.days=item.days.split(',')
+       
+      }else{
+        item.days=[]
+      }
+      arrayassignments.push(item)
+    })
+    console.log(arrayassignments)
+
+      return view.render('assignment-customers.index', {assignments:arrayassignments,employees:employees.toJSON()})
+    }
+  
+  
 
   /**
    * Render a form to be used for creating a new assignmentcustomer.
@@ -45,6 +68,22 @@ class AssignmentCustomerController {
    * @param {Response} ctx.response
    */
   async store ({ request, response }) {
+   
+    const a = request.all()
+    
+    console.log(a.days)
+     
+    await AssignmentCustomer.query().where('customer_id',a.customer_id).delete()
+    
+    a.days.forEach(function(item){
+      const assignment = new AssignmentCustomer()
+      assignment.employee_id = a.employee_id
+      assignment.customer_id = a.customer_id
+      assignment.day = item
+      assignment.save()
+    })
+    
+    response.redirect('/assignment-customers')
   }
 
   /**

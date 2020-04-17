@@ -49,3 +49,9 @@ Route.delete('/roles/delete/:id?','RoleController.destroy').as('roles.delete')
 // Sales
 Route.get('sales-page/:page?', 'SaleController.index').as('sales.pagination')
 Route.get('sales/:id', 'SaleController.show').as('sales.show').middleware('auth:session')
+
+
+//Assignment-customers
+Route.get('/assignment-customers/:page?','AssignmentCustomerController.index').as('assignment-customers.pagination')
+Route.get('pruebas','AssignmentCustomerController.prueba')
+Route.post('assignment-customer','AssignmentCustomerController.store').as('assignment-customer.store')
