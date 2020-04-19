@@ -96,7 +96,6 @@ DELIMITER //
 					WHERE cus.name LIKE CONCAT('%',search,'%')
 					GROUP BY a_c.customer_id;
 	END//
-	
 DELIMITER ;
 
 CALL get_assignments('')

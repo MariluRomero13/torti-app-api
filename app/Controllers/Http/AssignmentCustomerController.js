@@ -14,67 +14,51 @@ const Database = use('Database')
 const AssignmentCustomer = use('App/Models/AssignmentCustomer')
 const Customer = use('App/Models/Customer')
 class AssignmentCustomerController {
-  /**
-   * Show a list of all assignmentcustomers.
-   * GET assignmentcustomers
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
- 
-  async index ({ request, response, view,params }) {
+
+  async index ({ request, response, view, params }) {
+    const page = params.page || 1
+    const search = request.input('search') || ''
+    const assigments = await Database.select(
+                    [Database.raw('e.id as employee_id, CONCAT(e.name," ", e.paternal," ", e.maternal) as employee'), 'c.name as customer', 'ac.day'])
+                    .from('assignment_customers as ac')
+                    .innerJoin('customers as c','c.id', 'ac.customer_id')
+                    .innerJoin('employees as e', 'e.id', 'ac.employee_id')
+                    .where('e.name', 'LIKE', '%' + search + '%')
+                    .orWhere('e.paternal', 'LIKE', '%' + search + '%')
+                    .orWhere('e.maternal', 'LIKE', '%' + search + '%')
+                    .orderBy('e.id', 'asc')
+                    .paginate(page, 5)
+    const pagination = assigments
+    pagination.route = 'assignment-customers.pagination'
+    if(pagination.lastPage < page && page != 1) {
+      response.route(pagination.route, { page: 1 }, null, true)
+    }
+    else {
+      pagination.offset = (pagination.page - 1) * pagination.perPage
+      pagination.search = search
+      return view.render('assignment-customers.index', { assigments: pagination })
+    }
+  }
+
+  async create ({ request, view }) {
     const search = request.input('search') || ''
     const employees = await Employee.all()
     const assignments = await Database.raw('call get_assignments(?)',[search])
-    console.log(assignments[0][0])
     var arrayassignments=[]
-    console.log(arrayassignments)
-    assignments[0][0].forEach(function(item,index,array){
+    assignments[0][0].forEach(function(item, index, array){
       if(item.days){
         item.days=item.days.split(',')
-       
       }else{
         item.days=[]
       }
       arrayassignments.push(item)
     })
-    console.log(arrayassignments)
-
-      return view.render('assignment-customers.index', {assignments:arrayassignments,employees:employees.toJSON()})
-    }
-  
-  
-
-  /**
-   * Render a form to be used for creating a new assignmentcustomer.
-   * GET assignmentcustomers/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
+    return view.render('assignment-customers.create', { assignments: arrayassignments, employees: employees.toJSON() })
   }
 
-  /**
-   * Create/save a new assignmentcustomer.
-   * POST assignmentcustomers
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async store ({ request, response }) {
-   
     const a = request.all()
-    
-    console.log(a.days)
-     
     await AssignmentCustomer.query().where('customer_id',a.customer_id).delete()
-    
     a.days.forEach(function(item){
       const assignment = new AssignmentCustomer()
       assignment.employee_id = a.employee_id
@@ -82,53 +66,19 @@ class AssignmentCustomerController {
       assignment.day = item
       assignment.save()
     })
-    
+
     response.redirect('/assignment-customers')
   }
 
-  /**
-   * Display a single assignmentcustomer.
-   * GET assignmentcustomers/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
   async show ({ params, request, response, view }) {
   }
 
-  /**
-   * Render a form to update an existing assignmentcustomer.
-   * GET assignmentcustomers/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
   async edit ({ params, request, response, view }) {
   }
 
-  /**
-   * Update assignmentcustomer details.
-   * PUT or PATCH assignmentcustomers/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async update ({ params, request, response }) {
   }
 
-  /**
-   * Delete a assignmentcustomer with id.
-   * DELETE assignmentcustomers/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async destroy ({ params, request, response }) {
   }
 
