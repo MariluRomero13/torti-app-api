@@ -25,6 +25,7 @@ Route.get('/get-products', 'ProductController.getProducts').middleware('auth:jwt
 
 //Assignments
 Route.get('get-routes-without-sale', 'AssignmentCustomerController.getRoutesWithoutSale').middleware('auth:jwt')
+Route.get('routes-by-employee', 'AuthController.getRoutesByEmployee').middleware('auth:jwt')
 
 // Sales
 Route.get('get-sales-history', 'SaleController.getSalesHistory').middleware('auth:jwt')
