@@ -5,11 +5,11 @@ const Model = use('Model')
 
 class PendingPaymentDetail extends Model {
   pending_payments () {
-    return this.hasMany('App/Models/PendingPayment', 'pending_payment_id')
+    return this.belongsTo('App/Models/PendingPayment', 'pending_payment_id')
   }
 
   products () {
-    return this.hasMany('App/Models/Product', 'product_id')
+    return this.belongsTo('App/Models/Product', 'product_id')
   }
 
   static get store() {

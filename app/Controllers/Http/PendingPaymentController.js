@@ -51,34 +51,33 @@ class PendingPaymentController {
     const rules = {
       customer_id: 'required',
       deposit: 'required|number',
-      details: 'required'
+      details: 'required|array',
+      'details.*.product_id': 'required|integer',
+      'details.*.quantity': 'required|integer|min:1'
     }
+
 
     const validation = await validate(request.all(), rules)
 
     if (validation.fails()) {
-      return response.ok({
-        status: false,
-        message: 'Ingresa los campos'
-      })
+      response.badRequest(validation.messages())
     }
 
     const pendingPaymentData = request.only(PendingPayment.store)
-    const pendingPayment = await PendingPayment.create(pendingPaymentData)
     const pendingPaymentDetails = request.input('details')
-    const pendingPaymentDetailsParsed = JSON.parse(pendingPaymentDetails)
-    for (const pendingPaymentDetail of pendingPaymentDetailsParsed) {
-      const newPendingPaymentDetail = new PendingPaymentDetail()
-      newPendingPaymentDetail.pending_payment_id = pendingPayment.id
-      newPendingPaymentDetail.product_id = pendingPaymentDetail.product_id
-      newPendingPaymentDetail.quantity = pendingPaymentDetail.quantity
-      await newPendingPaymentDetail.save()
+    const trx = await Database.beginTransaction()
+    try {
+      const pendingPayment = await PendingPayment.create(pendingPaymentData, trx)
+      await pendingPayment.pending_payment_details().createMany(pendingPaymentDetails, trx)
+    } catch (error) {
+      await trx.rollback()
+      return response.badRequest()
     }
 
+    await trx.commit()
     return response.ok({
       success: true,
-      message: 'Pending Payment successfully created',
-      data: ''
+      message: 'Pending Payment successfully created'
     })
   }
 

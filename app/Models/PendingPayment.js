@@ -9,7 +9,7 @@ class PendingPayment extends Model {
   }
 
   pending_payment_details () {
-    return this.hasMany('App/Models/PendingPaymentDetail', 'pending_payment_id')
+    return this.hasMany('App/Models/PendingPaymentDetail', 'id', 'pending_payment_id')
   }
 
   static get store() {
