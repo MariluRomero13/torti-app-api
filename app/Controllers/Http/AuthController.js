@@ -17,8 +17,8 @@ class AuthController {
     })
     .withRefreshToken()
     .attempt(username, password, true)
-    const assignments = await this.getRoutesByEmployee(user.id)
-    return response.ok({ token: token, assignments: assignments })
+    // const assignments = await this.getRoutesByEmployee(user.id)
+    return response.ok(token)
   }
 
   async loginPanel ({ auth, response, request, session }) {
@@ -75,8 +75,9 @@ class AuthController {
     response.clearCookie('PGADMIN_LANGUAGE')
   }
 
-  async getRoutesByEmployee(userLogged) {
-    const user = await User.find(userLogged)
+  async getRoutesByEmployee({ auth }) {
+    const userLogged = await auth.getUser()
+    const user = await User.find(userLogged.id)
     const employee = await Employee.findBy('user_id', user.id)
     const day = moment().isoWeekday()
     const assignments = await Database.raw('call get_routes_employee(?, ?)',[day,employee.id])

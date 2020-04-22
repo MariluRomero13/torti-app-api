@@ -87,8 +87,7 @@ class AssignmentCustomerController {
     const user = await User.find(userLogged.id)
     const employee = await Employee.findBy('user_id', user.id)
     const day = moment().isoWeekday()
-
-    const assignments = await Database.raw('call get_routes_without_sale(?, ?)',[day,employee.id])
+    const assignments = await Database.raw('call get_routes_without_sale(?, ?)',[day, employee.id])
     return assignments[0][0]
   }
 }
