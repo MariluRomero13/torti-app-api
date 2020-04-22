@@ -60,7 +60,7 @@ class PendingPaymentController {
     const validation = await validate(request.all(), rules)
 
     if (validation.fails()) {
-      response.badRequest(validation.messages())
+      return response.badRequest(validation.messages())
     }
 
     const pendingPaymentData = request.only(PendingPayment.store)
