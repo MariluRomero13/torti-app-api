@@ -63,33 +63,33 @@ Factory.blueprint('App/Models/AssignmentCustomer', (faker, i, data) => {
   }
 })
 
-Factory.blueprint('App/Models/Sale', (faker, i, data) => {
-  return {
-    employee_id: data.employee_id,
-    customer_id: data.customer_id,
-    status: data.status
-  }
-})
+// Factory.blueprint('App/Models/Sale', (faker, i, data) => {
+//   return {
+//     employee_id: data.employee_id,
+//     customer_id: data.customer_id,
+//     status: data.status
+//   }
+// })
 
-Factory.blueprint('App/Models/SaleDetail', (faker, i, data) => {
-  return {
-    sale_id: data.sale_id,
-    product_id: data.product_id,
-    quantity: data.quantity
-  }
-})
+// Factory.blueprint('App/Models/SaleDetail', (faker, i, data) => {
+//   return {
+//     sale_id: data.sale_id,
+//     product_id: data.product_id,
+//     quantity: data.quantity
+//   }
+// })
 
-Factory.blueprint('App/Models/PendingPayment', (faker, i, data) => {
-  return {
-    customer_id: data.customer_id,
-    deposit: data.deposit
-  }
-})
+// Factory.blueprint('App/Models/PendingPayment', (faker, i, data) => {
+//   return {
+//     customer_id: data.customer_id,
+//     deposit: data.deposit
+//   }
+// })
 
-Factory.blueprint('App/Models/PendingPaymentDetail', (faker, i, data) => {
-  return {
-    pending_payment_id: data.pending_payment_id,
-    product_id: data.product_id,
-    quantity: data.quantity
-  }
-})
+// Factory.blueprint('App/Models/PendingPaymentDetail', (faker, i, data) => {
+//   return {
+//     pending_payment_id: data.pending_payment_id,
+//     product_id: data.product_id,
+//     quantity: data.quantity
+//   }
+// })

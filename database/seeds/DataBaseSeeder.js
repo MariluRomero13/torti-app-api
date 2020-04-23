@@ -18,10 +18,10 @@ const  EmployeeSeeder = require('./EmployeeSeeder')
 const  CustomerSeeder = require('./CustomerSeeder')
 const  ProductSeeder = require('./ProductSeeder')
 const AssignmentCustomerSeeder = require('./AssignmentCustomerSeeder')
-const  SaleSeeder = require('./SaleSeeder')
-const  SaleDetailSeeder = require('./SaleDetailSeeder')
-const  PendingPaymentSeeder = require('./PendingPaymentSeeder')
-const  PendingPaymentDetailSeeder = require('./PendingPaymentDetailSeeder')
+// const  SaleSeeder = require('./SaleSeeder')
+// const  SaleDetailSeeder = require('./SaleDetailSeeder')
+// const  PendingPaymentSeeder = require('./PendingPaymentSeeder')
+// const  PendingPaymentDetailSeeder = require('./PendingPaymentDetailSeeder')
 class DataBaseSeeder {
   async run () {
     await RoleSeeder._run()
@@ -30,10 +30,10 @@ class DataBaseSeeder {
     await CustomerSeeder._run()
     await ProductSeeder._run()
     await AssignmentCustomerSeeder._run()
-    await SaleSeeder._run()
-    await SaleDetailSeeder._run()
-    await PendingPaymentSeeder._run()
-    await PendingPaymentDetailSeeder._run()
+    // await SaleSeeder._run()
+    // await SaleDetailSeeder._run()
+    // await PendingPaymentSeeder._run()
+    // await PendingPaymentDetailSeeder._run()
   }
 }
 

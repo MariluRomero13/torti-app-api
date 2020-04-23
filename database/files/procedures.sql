@@ -42,7 +42,7 @@ CREATE procedure get_sales_history
 	employee int
 )
 begin
-	select  c.id, c.name as customer, sum(sl.quantity * p.unit_price) as total from assignment_customers as ac
+	select  s.id, c.name as customer, sum(sl.quantity * p.unit_price) as total from assignment_customers as ac
 	inner join employees as e on e.id = ac.employee_id
 	inner join customers as c on c.id = ac.customer_id
 	inner join sales as s on s.customer_id = c.id
@@ -53,7 +53,8 @@ begin
 end $$
 DELIMITER $$
 
-call get_sales_historial (1,1);
+call get_sales_history (1,1);
+drop procedure get_sales_history;
 
 #Procedimiento que obtiene las rutas a las que no se les ha realizado una venta
 DELIMITER $$
@@ -100,15 +101,15 @@ call getTotal (2)
 DELIMITER //
 
 	CREATE PROCEDURE get_assignments(IN search CHAR(50))
-	BEGIN 
+	BEGIN
 		SELECT assignments.assignment_id,
 		assignments.customer_id,
 		assignments.name,
 		assignments.employee,
 		assignments.address,
 		GROUP_CONCAT(assignments.day) AS days
-		from		
-(SELECT 
+		from
+(SELECT
 		a_c.id AS assignment_id,
 		cus.id AS customer_id,
 		cus.name AS name,
@@ -119,9 +120,9 @@ DELIMITER //
 		left JOIN assignment_customers AS a_c	ON a_c.customer_id=cus.id
 		left	JOIN employees AS emp  ON a_c.employee_id=emp.id
 		WHERE cus.name LIKE CONCAT('%',search,'%'))AS assignments
-		GROUP BY assignments.customer_id;	
+		GROUP BY assignments.customer_id;
 	END//
-	
+
 DELIMITER ;
 
 CALL get_assignments('')
