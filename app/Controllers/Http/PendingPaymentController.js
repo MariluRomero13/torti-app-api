@@ -22,8 +22,10 @@ class PendingPaymentController {
     const page = params.page || 1
     const search = request.input('search') || ''
     const payments = await Database
-                            .select(['pp.id as pending_payment_id', 'c.name as customer', 'pp.status as payment_type',
+                            .select(['pp.id as pending_payment_id', 'c.name as customer',
+                              'pp.status as payment_type', 'pp.deposit as deposit',
                               Database.raw('SUM(ppd.quantity * p.unit_price) as total'),
+                              Database.raw('(SUM(ppd.quantity * p.unit_price) - pp.deposit) as to_pay'),
                               Database.raw('DATE_FORMAT(pp.created_at, "%d-%m-%Y") as payment_date')])
                             .from('pending_payments as pp')
                             .innerJoin('customers as c', 'c.id', 'pp.customer_id')
