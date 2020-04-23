@@ -7,7 +7,7 @@ CREATE procedure get_routes_employee
 	employee int
 )
 begin
-	select  c.id, c.name as customer, IF(t1.pendiente = 1, t1.pendiente, 0) as pending_payment, t1.payment_id from assignment_customers as ac
+	select  c.id, c.name as customer, IF(t1.pendiente = 1, t1.pendiente, 0) as pending_payment, IF(t1.payment_id >= 1, t1.payment_id, 0) as payment_id from assignment_customers as ac
     inner join employees as e on e.id = ac.employee_id
 	inner join customers as c on c.id = ac.customer_id left join (select c.id as customer_id, count(pp.id) as pendiente, pp.id as payment_id
 	from customers as c inner join pending_payments as pp on pp.customer_id = c.id where pp.status = 1) as t1 on t1.customer_id = c.id
